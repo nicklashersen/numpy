@@ -56,6 +56,17 @@ Ten python functions with the highest _cyclomatic complexity_ (CNN) according to
 
 ### Manual cyclomatic complexity
 
+The cyclomatic complexity of a function can be calculated through two different methods:
+
+ 1. \pi - s + 2, where 
+       \pi is the number of decisions made.
+	   s is the number of terminating statements.
+
+ 2. Drawing the control flow graph and calculating CNN = E - N + P, where
+       E is the number of edges in the graph.
+	   N is the number of nodes in the graph.
+	   P is the number of connected components in the graph.
+
 #### add\_data\_file 
 
 The function `add_data_file` in `numpy/distutils/misc_utils.py` adds data files to configuration\_data\_files. The function has a cyclomatic complexity number (CCN) of 13 and is moderately long. Accoring to lizard the CCN of the function should be 18 which implies that lizard probably calculates the CNN in some other way. Exceptions were taken into consideration during the calculation. A possible reason for the high CCN could be that the function supports many different file path formats (absolute- and relative file name, etc.) which results in a lot of branchs. As seen in the functions  control flow graph below a lot of the branchs terminates. We could improve CCN of the function by simply splitting these branches into separate functions.
