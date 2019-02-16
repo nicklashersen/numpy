@@ -42,8 +42,8 @@ Ten python functions with the highest _cyclomatic complexity_ (CNN) according to
 ================================================
   NLOC    CCN   token  PARAM  length  location
 ------------------------------------------------
+     161     49   1037      2     190 build_extension@288-477@numpy/numpy/distutils/command/build_ext.py
      121     50    960      2     126 buildcallback@452-577@numpy/numpy/f2py/cb_rules.py
-     148     53   1096      3     238 _get_multi_index@801-1038@numpy/numpy/core/tests/test_indexing.py
      114     55    849      5     119 vars2fortran@3125-3243@numpy/numpy/f2py/crackfortran.py
      138     55    749      1     139 scaninputline@176-314@numpy/numpy/f2py/f2py2e.py
      143     55   1295      3     148 getarrlen@2167-2314@numpy/numpy/f2py/crackfortran.py
