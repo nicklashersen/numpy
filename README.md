@@ -42,16 +42,16 @@ Ten python functions with high (>15)  _cyclomatic complexity_ (CNN) according to
 ================================================
   NLOC    CCN   token  PARAM  length  location
 ------------------------------------------------
-     59      18    375      2     150 add_data_files@1184-1333@./distutils/misc_util.py
-     49      17    363      1      57 finalize_options@86-142@./distutils/command/build_src.py
-     83      17    493      4      99 _strings_richcompare@1001-1099@./core/src/multiarray/arrayobject.c
-     123     21    573      3     193 array_richcompare@1352-1544@./core/src/multiarray/arrayobject.c
-     115     18    598      3     132 array_new@1618-1749@./core/src/multiarray/arrayobject.c
-     123     21    573      3     193 array_richcompare@1352-1544@./core/src/multiarray/arrayobject.c
-     98      17    609      3     111 PyArray_ArgMax@41-151@./core/src/multiarray/calculation.c
-     89      18    540      5     119 PyArray_AssignRawScalar@191-309@./core/src/multiarray/array_assign_scalar.c
-     79      17    389     10      99 npyiter_prepare_operands@1160-1258@./core/src/multiarray/nditer_constr.c
-     44      16    382      2      52 _get_formatdict@359-410@./core/arrayprint.py
+     59     18    375      2     150 add_data_files@1184-1333@./distutils/misc_util.py
+     61     22    467      2     120 add_data_dir@1054-1173@./distutils/misc_util.py
+     49     17    363      1      57 finalize_options@86-142@./distutils/command/build_src.py
+     41     16    311      3      80 CCompiler_customize@468-547@./distutils/ccompiler.py
+     52     20    420      3      54 get_paths@663-716@./distutils/system_info.py
+     65     17    392      1      71 get_atlas_version@1465-1535@./distutils/system_info.py
+     47     17    294      1      63 setup@109-171@./distutils/core.py
+     35     16    272      4      56 _exec_command@265-320@./distutils/exec_command.py
+     38     16    245      2      55 _scalar_str@115-169@./core/_dtype.py
+     34     17    238      1      57 long_double_representation@345-401@./core/setup_common.py
 ```
 
 ### Manual cyclomatic complexity
