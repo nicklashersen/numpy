@@ -80,7 +80,7 @@ The function `finalize_options` in `numpy/distutils/command/build_src.py` is not
 ## Part 2: Coverage measurement and improvement
 
 ### Part 2.1: DIY
-Our coverage tool checks the branch coverage by giving each branch a unique ID. When that branch is taken when a test is executed the branch ID is written to a file called `testcoverage.txt`. Calls to `secoverage.write_coverage(branch_id)` are used to perform the write to `testcoverage.txt`.
+Our coverage tool checks the branch coverage by giving each branch a unique ID. When that branch is taken when a test is executed the branch ID is written to a file called `testcoverage.txt`. Calls to `secoverage.write_coverage(branch_id)` are used to perform the write to `testcoverage.txt`. The tool is embedded into the existing runtests.py script and is executed when the tests are executed.
 
 **What is the quality of your own coverage measurement? Does it take into account ternary operators (condition ? yes : no) and exceptions, if available in your language?**
 Since our tool requires manual instrumentation of the source code to add the calls to `secoverage.write_coverage(branch_id)` it is up to the one inserting the calls to decide how many and what operations to support. Currently loops, if-statements and exceptions are supported. Tenaray operators are rewritten to if-statements for the coverage to work. That way the quality of the coverage measurement depends on how many and where calls to `secoverage.write_coverage(branch_id)` are inserted. Since they are inserted at every branch-statement that we could find the quality should be quite good. However, some operators like assert are not supported.
