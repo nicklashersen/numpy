@@ -42,8 +42,8 @@ Ten python functions with high (>15)  _cyclomatic complexity_ (CNN) according to
 ================================================
   NLOC    CCN   token  PARAM  length  location
 ------------------------------------------------
-     41      16    311      3      80 CCompiler_customize@468-547@./distutils/ccompiler.py
-     103     17    573      2     129 PyArray_CopyObject@239-367@./core/src/multiarray/arrayobject.c
+     59      18    375      2     150 add_data_files@1184-1333@./distutils/misc_util.py
+     49      17    363      1      57 finalize_options@86-142@./distutils/command/build_src.py
      83      17    493      4      99 _strings_richcompare@1001-1099@./core/src/multiarray/arrayobject.c
      123     21    573      3     193 array_richcompare@1352-1544@./core/src/multiarray/arrayobject.c
      115     18    598      3     132 array_new@1618-1749@./core/src/multiarray/arrayobject.c
