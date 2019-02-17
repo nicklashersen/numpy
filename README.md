@@ -73,22 +73,22 @@ We plan to continue with this project.
 
 ## Part 1: Complexity measurement
 
-Ten python functions with the highest _cyclomatic complexity_ (CNN) according to lizard:
+Ten python functions with high (>15)  _cyclomatic complexity_ (CNN) according to lizard:
 
 ```
 ================================================
   NLOC    CCN   token  PARAM  length  location
 ------------------------------------------------
-     161     49   1037      2     190 build_extension@288-477@numpy/numpy/distutils/command/build_ext.py
-     121     50    960      2     126 buildcallback@452-577@numpy/numpy/f2py/cb_rules.py
-     114     55    849      5     119 vars2fortran@3125-3243@numpy/numpy/f2py/crackfortran.py
-     138     55    749      1     139 scaninputline@176-314@numpy/numpy/f2py/f2py2e.py
-     143     55   1295      3     148 getarrlen@2167-2314@numpy/numpy/f2py/crackfortran.py
-     147     58   1177      0     169 run_compile@487-655@numpy/numpy/f2py/f2py2e.py
-     191     58   1158      3     206 readfortrancode@330-535@numpy/numpy/f2py/crackfortran.py
-     140     65   1172      4     142 updatevars@1536-1677@numpy/numpy/f2py/crackfortran.py
-     335    162   3021      1     347 analyzevars@2524-2870@numpy/numpy/f2py/crackfortran.py
-     527    176   3988      3     545 analyzeline@903-1447@numpy/numpy/f2py/crackfortran.py
+     59     18    375      2     150 add_data_files@1184-1333@./distutils/misc_util.py
+     61     22    467      2     120 add_data_dir@1054-1173@./distutils/misc_util.py
+     49     17    363      1      57 finalize_options@86-142@./distutils/command/build_src.py
+     41     16    311      3      80 CCompiler_customize@468-547@./distutils/ccompiler.py
+     52     20    420      3      54 get_paths@663-716@./distutils/system_info.py
+     65     17    392      1      71 get_atlas_version@1465-1535@./distutils/system_info.py
+     47     17    294      1      63 setup@109-171@./distutils/core.py
+     35     16    272      4      56 _exec_command@265-320@./distutils/exec_command.py
+     38     16    245      2      55 _scalar_str@115-169@./core/_dtype.py
+     34     17    238      1      57 long_double_representation@345-401@./core/setup_common.py
 ```
 
 ### Manual cyclomatic complexity
@@ -99,7 +99,7 @@ The cyclomatic complexity of a function can be calculated through two different 
        \pi is the number of decisions made.
 	   s is the number of terminating statements.
 
- 2. Drawing the control flow graph and calculating CNN = E - N + P, where
+ 2. Drawing the control flow graph and calculating CNN = E - N + 2 * P, where
        E is the number of edges in the graph.
 	   N is the number of nodes in the graph.
 	   P is the number of connected components in the graph.
