@@ -62,7 +62,7 @@ The cyclomatic complexity of a function can be calculated through two different 
        \pi is the number of decisions made.
 	   s is the number of terminating statements.
 
- 2. Drawing the control flow graph and calculating CNN = E - N + P, where
+ 2. Drawing the control flow graph and calculating CNN = E - N + 2 * P, where
        E is the number of edges in the graph.
 	   N is the number of nodes in the graph.
 	   P is the number of connected components in the graph.
