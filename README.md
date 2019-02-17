@@ -36,22 +36,22 @@ Tests can then be run after installation with:
 
 ## Part 1: Complexity measurement
 
-Ten python functions with the highest _cyclomatic complexity_ (CNN) according to lizard:
+Ten python functions with high (>15)  _cyclomatic complexity_ (CNN) according to lizard:
 
 ```
 ================================================
   NLOC    CCN   token  PARAM  length  location
 ------------------------------------------------
-     161     49   1037      2     190 build_extension@288-477@numpy/numpy/distutils/command/build_ext.py
-     121     50    960      2     126 buildcallback@452-577@numpy/numpy/f2py/cb_rules.py
-     114     55    849      5     119 vars2fortran@3125-3243@numpy/numpy/f2py/crackfortran.py
-     138     55    749      1     139 scaninputline@176-314@numpy/numpy/f2py/f2py2e.py
-     143     55   1295      3     148 getarrlen@2167-2314@numpy/numpy/f2py/crackfortran.py
-     147     58   1177      0     169 run_compile@487-655@numpy/numpy/f2py/f2py2e.py
-     191     58   1158      3     206 readfortrancode@330-535@numpy/numpy/f2py/crackfortran.py
-     140     65   1172      4     142 updatevars@1536-1677@numpy/numpy/f2py/crackfortran.py
-     335    162   3021      1     347 analyzevars@2524-2870@numpy/numpy/f2py/crackfortran.py
-     527    176   3988      3     545 analyzeline@903-1447@numpy/numpy/f2py/crackfortran.py
+     41      16    311      3      80 CCompiler_customize@468-547@./distutils/ccompiler.py
+     103     17    573      2     129 PyArray_CopyObject@239-367@./core/src/multiarray/arrayobject.c
+     83      17    493      4      99 _strings_richcompare@1001-1099@./core/src/multiarray/arrayobject.c
+     123     21    573      3     193 array_richcompare@1352-1544@./core/src/multiarray/arrayobject.c
+     115     18    598      3     132 array_new@1618-1749@./core/src/multiarray/arrayobject.c
+     123     21    573      3     193 array_richcompare@1352-1544@./core/src/multiarray/arrayobject.c
+     98      17    609      3     111 PyArray_ArgMax@41-151@./core/src/multiarray/calculation.c
+     89      18    540      5     119 PyArray_AssignRawScalar@191-309@./core/src/multiarray/array_assign_scalar.c
+     79      17    389     10      99 npyiter_prepare_operands@1160-1258@./core/src/multiarray/nditer_constr.c
+     44      16    382      2      52 _get_formatdict@359-410@./core/arrayprint.py
 ```
 
 ### Manual cyclomatic complexity
