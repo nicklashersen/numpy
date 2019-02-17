@@ -11,6 +11,8 @@ import subprocess
 import shutil
 import multiprocessing
 
+import secoverage
+
 import distutils
 from distutils.errors import DistutilsError
 try:
@@ -1108,67 +1110,108 @@ class Configuration(object):
 
         """
         if is_sequence(data_path):
+            secoverage.write_coverage("add_data_dir-1")
             d, data_path = data_path
         else:
+            secoverage.write_coverage("add_data_dir-2")
             d = None
         if is_sequence(data_path):
+            secoverage.write_coverage("add_data_dir-4")
             [self.add_data_dir((d, p)) for p in data_path]
             return
+        else:
+            secoverage.write_coverage("add_data_dir-5")
         if not is_string(data_path):
+            secoverage.write_coverage("add_data_dir-6")
             raise TypeError("not a string: %r" % (data_path,))
+        else:
+            secoverage.write_coverage("add_data_dir-7")
         if d is None:
+            secoverage.write_coverage("add_data_dir-8")
             if os.path.isabs(data_path):
+                secoverage.write_coverage("add_data_dir-9")
                 return self.add_data_dir((os.path.basename(data_path), data_path))
+            else:
+                secoverage.write_coverage("add_data_dir-10")
             return self.add_data_dir((data_path, data_path))
+        else:
+            secoverage.write_coverage("add_data_dir-11")
         paths = self.paths(data_path, include_non_existing=False)
         if is_glob_pattern(data_path):
+            secoverage.write_coverage("add_data_dir-12")
             if is_glob_pattern(d):
+                secoverage.write_coverage("add_data_dir-13")
                 pattern_list = allpath(d).split(os.sep)
                 pattern_list.reverse()
                 # /a/*//b/ -> /a/*/b
                 rl = list(range(len(pattern_list)-1)); rl.reverse()
                 for i in rl:
+                    secoverage.write_coverage("add_data_dir-14")
                     if not pattern_list[i]:
+                        secoverage.write_coverage("add_data_dir-15")
                         del pattern_list[i]
+                    else:
+                        secoverage.write_coverage("add_data_dir-16")
                 #
                 for path in paths:
+                    secoverage.write_coverage("add_data_dir-17")
                     if not os.path.isdir(path):
+                        secoverage.write_coverage("add_data_dir-18")
                         print('Not a directory, skipping', path)
                         continue
+                    else:
+                        secoverage.write_coverage("add_data_dir-19")
                     rpath = rel_path(path, self.local_path)
                     path_list = rpath.split(os.sep)
                     path_list.reverse()
                     target_list = []
                     i = 0
                     for s in pattern_list:
+                        secoverage.write_coverage("add_data_dir-20")
                         if is_glob_pattern(s):
+                            secoverage.write_coverage("add_data_dir-21")
                             if i>=len(path_list):
+                                secoverage.write_coverage("add_data_dir-22")
                                 raise ValueError('cannot fill pattern %r with %r' \
                                       % (d, path))
+                            else:
+                                secoverage.write_coverage("add_data_dir-23")
                             target_list.append(path_list[i])
                         else:
+                            secoverage.write_coverage("add_data_dir-24")
                             assert s==path_list[i], repr((s, path_list[i], data_path, d, path, rpath))
                             target_list.append(s)
                         i += 1
                     if path_list[i:]:
+                        secoverage.write_coverage("add_data_dir-25")
                         self.warn('mismatch of pattern_list=%s and path_list=%s'\
                                   % (pattern_list, path_list))
+                    else:
+                        secoverage.write_coverage("add_data_dir-26")
                     target_list.reverse()
                     self.add_data_dir((os.sep.join(target_list), path))
             else:
+                secoverage.write_coverage("add_data_dir-27")
                 for path in paths:
+                    secoverage.write_coverage("add_data_dir-28")
                     self.add_data_dir((d, path))
             return
+        else:
+            secoverage.write_coverage("add_data_dir-29")
         assert not is_glob_pattern(d), repr(d)
 
         dist = self.get_distribution()
         if dist is not None and dist.data_files is not None:
+            secoverage.write_coverage("add_data_dir-30")
             data_files = dist.data_files
         else:
+            secoverage.write_coverage("add_data_dir-31")
             data_files = self.data_files
 
         for path in paths:
+            secoverage.write_coverage("add_data_dir-32")
             for d1, f in list(general_source_directories_files(path)):
+                secoverage.write_coverage("add_data_dir-33")
                 target_path = os.path.join(self.path_in_package, d, d1)
                 data_files.append((target_path, f))
 
@@ -1270,64 +1313,93 @@ class Configuration(object):
         """
 
         if len(files)>1:
+            secoverage.write_coverage("add_data_files-1")
             for f in files:
+                secoverage.write_coverage("add_data_files-2")
                 self.add_data_files(f)
             return
+        else:
+            secoverage.write_coverage("add_data_files-3")
         assert len(files)==1
         if is_sequence(files[0]):
+            secoverage.write_coverage("add_data_files-4")
             d, files = files[0]
         else:
+            secoverage.write_coverage("add_data_files-5")
             d = None
         if is_string(files):
+            secoverage.write_coverage("add_data_files-6")
             filepat = files
         elif is_sequence(files):
+            secoverage.write_coverage("add_data_files-7")
             if len(files)==1:
+                secoverage.write_coverage("add_data_files-8")
                 filepat = files[0]
             else:
+                secoverage.write_coverage("add_data_files-9")
                 for f in files:
+                    secoverage.write_coverage("add_data_files-10")
                     self.add_data_files((d, f))
                 return
         else:
+            secoverage.write_coverage("add_data_files-11")
             raise TypeError(repr(type(files)))
 
         if d is None:
+            secoverage.write_coverage("add_data_files-12")
             if hasattr(filepat, '__call__'):
+                secoverage.write_coverage("add_data_files-13")
                 d = ''
             elif os.path.isabs(filepat):
+                secoverage.write_coverage("add_data_files-14")
                 d = ''
             else:
+                secoverage.write_coverage("add_data_files-15")
                 d = os.path.dirname(filepat)
             self.add_data_files((d, files))
             return
+        else:
+            secoverage.write_coverage("add_data_files-16")
 
         paths = self.paths(filepat, include_non_existing=False)
         if is_glob_pattern(filepat):
+            secoverage.write_coverage("add_data_files-17")
             if is_glob_pattern(d):
+                secoverage.write_coverage("add_data_files-18")
                 pattern_list = d.split(os.sep)
                 pattern_list.reverse()
                 for path in paths:
+                    secoverage.write_coverage("add_data_files-19")
                     path_list = path.split(os.sep)
                     path_list.reverse()
                     path_list.pop() # filename
                     target_list = []
                     i = 0
                     for s in pattern_list:
+                        secoverage.write_coverage("add_data_files-20")
                         if is_glob_pattern(s):
+                            secoverage.write_coverage("add_data_files-21")
                             target_list.append(path_list[i])
                             i += 1
                         else:
+                            secoverage.write_coverage("add_data_files-22")
                             target_list.append(s)
                     target_list.reverse()
                     self.add_data_files((os.sep.join(target_list), path))
             else:
+                secoverage.write_coverage("add_data_files-23")
                 self.add_data_files((d, paths))
             return
+        else:
+            secoverage.write_coverage("add_data_files-24")
         assert not is_glob_pattern(d), repr((d, filepat))
 
         dist = self.get_distribution()
         if dist is not None and dist.data_files is not None:
+            secoverage.write_coverage("add_data_files-25")
             data_files = dist.data_files
         else:
+            secoverage.write_coverage("add_data_files-26")
             data_files = self.data_files
 
         data_files.append((os.path.join(self.path_in_package, d), paths))

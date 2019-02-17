@@ -9,6 +9,8 @@ import sys
 
 import numpy as np
 
+import secoverage
+
 
 _kind_to_stem = {
     'u': 'uint',
@@ -116,55 +118,75 @@ def _scalar_str(dtype, short):
     byteorder = _byte_order_str(dtype)
 
     if dtype.type == np.bool_:
+        secoverage.write_coverage("_scalar_str-1")
         if short:
+            secoverage.write_coverage("_scalar_str-2")
             return "'?'"
         else:
+            secoverage.write_coverage("_scalar_str-3")
             return "'bool'"
 
     elif dtype.type == np.object_:
+        secoverage.write_coverage("_scalar_str-4")
         # The object reference may be different sizes on different
         # platforms, so it should never include the itemsize here.
         return "'O'"
 
     elif dtype.type == np.string_:
+        secoverage.write_coverage("_scalar_str-5")
         if _isunsized(dtype):
+            secoverage.write_coverage("_scalar_str-6")
             return "'S'"
         else:
+            secoverage.write_coverage("_scalar_str-7")
             return "'S%d'" % dtype.itemsize
 
     elif dtype.type == np.unicode_:
+        secoverage.write_coverage("_scalar_str-8")
         if _isunsized(dtype):
+            secoverage.write_coverage("_scalar_str-9")
             return "'%sU'" % byteorder
         else:
+            secoverage.write_coverage("_scalar_str-10")
             return "'%sU%d'" % (byteorder, dtype.itemsize / 4)
 
     # unlike the other types, subclasses of void are preserved - but
     # historically the repr does not actually reveal the subclass
     elif issubclass(dtype.type, np.void):
+        secoverage.write_coverage("_scalar_str-11")
         if _isunsized(dtype):
+            secoverage.write_coverage("_scalar_str-12")
             return "'V'"
         else:
+            secoverage.write_coverage("_scalar_str-13")
             return "'V%d'" % dtype.itemsize
 
     elif dtype.type == np.datetime64:
+        secoverage.write_coverage("_scalar_str-14")
         return "'%sM8%s'" % (byteorder, _datetime_metadata_str(dtype))
 
     elif dtype.type == np.timedelta64:
+        secoverage.write_coverage("_scalar_str-15")
         return "'%sm8%s'" % (byteorder, _datetime_metadata_str(dtype))
 
     elif np.issubdtype(dtype, np.number):
+        secoverage.write_coverage("_scalar_str-16")
         # Short repr with endianness, like '<f8'
         if short or dtype.byteorder not in ('=', '|'):
+            secoverage.write_coverage("_scalar_str-17")
             return "'%s%c%d'" % (byteorder, dtype.kind, dtype.itemsize)
 
         # Longer repr, like 'float64'
         else:
+            secoverage.write_coverage("_scalar_str-18")
             return "'%s%d'" % (_kind_name(dtype), 8*dtype.itemsize)
 
     elif dtype.isbuiltin == 2:
+        secoverage.write_coverage("_scalar_str-19")
         return dtype.type.__name__
 
     else:
+        secoverage.write_coverage("_scalar_str-20")
         raise RuntimeError(
             "Internal error: NumPy dtype unrecognized type number")
 

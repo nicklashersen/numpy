@@ -29,6 +29,8 @@ from numpy.distutils.command import config, config_compiler, \
      install_clib
 from numpy.distutils.misc_util import get_data_files, is_sequence, is_string
 
+import secoverage
+
 numpy_cmdclass = {'build':            build.build,
                   'build_src':        build_src.build_src,
                   'build_scripts':    build_scripts.build_scripts,
@@ -112,10 +114,14 @@ def setup(**attr):
 
     new_attr = attr.copy()
     if 'cmdclass' in new_attr:
+        secoverage.write_coverage("setup-1")
         cmdclass.update(new_attr['cmdclass'])
+    else:
+        secoverage.write_coverage("setup-2")
     new_attr['cmdclass'] = cmdclass
 
     if 'configuration' in new_attr:
+        secoverage.write_coverage("setup-3")
         # To avoid calling configuration if there are any errors
         # or help request in command in the line.
         configuration = new_attr.pop('configuration')
@@ -130,40 +136,63 @@ def setup(**attr):
             distutils.core._setup_distribution = old_dist
             distutils.core._setup_stop_after = old_stop
         if dist.help or not _command_line_ok():
+            secoverage.write_coverage("setup-4")
             # probably displayed help, skip running any commands
             return dist
+        else:
+            secoverage.write_coverage("setup-5")
 
         # create setup dictionary and append to new_attr
         config = configuration()
         if hasattr(config, 'todict'):
+            secoverage.write_coverage("setup-6")
             config = config.todict()
+        else:
+            secoverage.write_coverage("setup-7")
         _dict_append(new_attr, **config)
+    else:
+        secoverage.write_coverage("setup-8")
 
     # Move extension source libraries to libraries
     libraries = []
     for ext in new_attr.get('ext_modules', []):
+        secoverage.write_coverage("setup-9")
         new_libraries = []
         for item in ext.libraries:
+            secoverage.write_coverage("setup-10")
             if is_sequence(item):
+                secoverage.write_coverage("setup-11")
                 lib_name, build_info = item
                 _check_append_ext_library(libraries, lib_name, build_info)
                 new_libraries.append(lib_name)
             elif is_string(item):
+                secoverage.write_coverage("setup-12")
                 new_libraries.append(item)
             else:
+                secoverage.write_coverage("setup-13")
                 raise TypeError("invalid description of extension module "
                                 "library %r" % (item,))
         ext.libraries = new_libraries
     if libraries:
+        secoverage.write_coverage("setup-14")
         if 'libraries' not in new_attr:
+            secoverage.write_coverage("setup-15")
             new_attr['libraries'] = []
+        else:
+            secoverage.write_coverage("setup-16")
         for item in libraries:
+            secoverage.write_coverage("setup-17")
             _check_append_library(new_attr['libraries'], item)
+    else:
+        secoverage.write_coverage("setup-18")
 
     # sources in ext_modules or libraries may contain header files
     if ('ext_modules' in new_attr or 'libraries' in new_attr) \
        and 'headers' not in new_attr:
+        secoverage.write_coverage("setup-19")
         new_attr['headers'] = []
+    else:
+        secoverage.write_coverage("setup-20")
 
     # Use our custom NumpyDistribution class instead of distutils' one
     new_attr['distclass'] = NumpyDistribution

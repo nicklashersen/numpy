@@ -24,6 +24,8 @@ from numpy.distutils.misc_util import cyg2win32, is_sequence, mingw32, \
                                       get_num_build_jobs, \
                                       _commandline_dep_string
 
+import secoverage
+
 # globals for parallel build management
 try:
     import threading
@@ -499,36 +501,56 @@ def CCompiler_customize(self, dist, need_cxx=0):
     log.info('customize %s' % (self.__class__.__name__))
     customize_compiler(self)
     if need_cxx:
+        secoverage.write_coverage("CCompiler_customize-1")
         # In general, distutils uses -Wstrict-prototypes, but this option is
         # not valid for C++ code, only for C.  Remove it if it's there to
         # avoid a spurious warning on every compilation.
         try:
             self.compiler_so.remove('-Wstrict-prototypes')
         except (AttributeError, ValueError):
+            secoverage.write_coverage("CCompiler_customize-2")
             pass
 
         if hasattr(self, 'compiler') and 'cc' in self.compiler[0]:
+            secoverage.write_coverage("CCompiler_customize-3")
             if not self.compiler_cxx:
+                secoverage.write_coverage("CCompiler_customize-4")
                 if self.compiler[0].startswith('gcc'):
+                    secoverage.write_coverage("CCompiler_customize-5")
                     a, b = 'gcc', 'g++'
                 else:
+                    secoverage.write_coverage("CCompiler_customize-6")
                     a, b = 'cc', 'c++'
                 self.compiler_cxx = [self.compiler[0].replace(a, b)]\
                                     + self.compiler[1:]
-        else:
-            if hasattr(self, 'compiler'):
-                log.warn("#### %s #######" % (self.compiler,))
-            if not hasattr(self, 'compiler_cxx'):
-                log.warn('Missing compiler_cxx fix for ' + self.__class__.__name__)
+            else:
+                secoverage.write_coverage("CCompiler_customize-7")
 
+        else:
+            secoverage.write_coverage("CCompiler_customize-8")
+            if hasattr(self, 'compiler'):
+                secoverage.write_coverage("CCompiler_customize-9")
+                log.warn("#### %s #######" % (self.compiler,))
+            else:
+                secoverage.write_coverage("CCompiler_customize-10")
+            if not hasattr(self, 'compiler_cxx'):
+                secoverage.write_coverage("CCompiler_customize-11")
+                log.warn('Missing compiler_cxx fix for ' + self.__class__.__name__)
+            else:
+                secoverage.write_coverage("CCompiler_customize-12")
+
+    else:
+        secoverage.write_coverage("CCompiler_customize-13")
 
     # check if compiler supports gcc style automatic dependencies
     # run on every extension so skip for known good compilers
     if hasattr(self, 'compiler') and ('gcc' in self.compiler[0] or
                                       'g++' in self.compiler[0] or
                                       'clang' in self.compiler[0]):
+        secoverage.write_coverage("CCompiler_customize-14")
         self._auto_depends = True
     elif os.name == 'posix':
+        secoverage.write_coverage("CCompiler_customize-15")
         import tempfile
         import shutil
         tmpdir = tempfile.mkdtemp()
@@ -540,10 +562,13 @@ def CCompiler_customize(self, dist, need_cxx=0):
                          extra_preargs=['-MMD', '-MF', fn + '.d'])
             self._auto_depends = True
         except CompileError:
+            secoverage.write_coverage("CCompiler_customize-16")
             self._auto_depends = False
         finally:
             shutil.rmtree(tmpdir)
 
+    else:
+        secoverage.write_coverage("CCompiler_customize-17")
     return
 
 replace_method(CCompiler, 'customize', CCompiler_customize)
