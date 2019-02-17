@@ -34,6 +34,43 @@ Tests can then be run after installation with:
 
 [![Powered by NumFOCUS](https://img.shields.io/badge/powered%20by-NumFOCUS-orange.svg?style=flat&colorA=E1523D&colorB=007D8A)](https://numfocus.org)
 
+## Part 0: On-boarding
+
+This section aims at describing the on-boarding documentation of the repository. Overall it did not take too long to get
+started with the project. However, we feel like the on-boarding documentation could be improved since it is not clear
+from the README where to begin.
+
+1. **How easily can you build the project? Briefly describe if everything worked as documented or not:**  
+   1. *Did you have to install a lot of additional tools to build the software? Were those tools well documented?*  
+   In order to build and run the project for development purposes; Python version 3 together with Cython and pytest where
+   required. These requirements may not be regarded as additional tools so any documentation for these should not be
+   needed. Although it is briefly described how to install these.
+
+   2. *Were other components installed automatically by the build script?*  
+   No, the build script did not install any other components other than the manually installed requirements.
+
+   3. *Did the build conclude automatically without errors?*  
+   Yes, once the requirements had been installed the project built without any errors.
+
+   ```txt
+   $ python3 runtests.py
+    Building, see build.log...
+    Build OK
+    NumPy version 1.17.0.dev0+a1bb0f3
+    NumPy relaxed strides checking option: True
+    .
+    .
+    .
+    7182 passed, 415 skipped, 171 deselected, 13 xfailed in 82.00 seconds
+   ```
+
+   4. *How well do examples and tests run on your system(s)?*  
+   Using the `runtests.py` script different examples and tests could easily be run. Usage of this script is even documented
+   within the file it self. Running all tests takes approximately 1-2 minutes on our systems.
+
+2. **Do you plan to continue or choose another project?**  
+We plan to continue with this project.
+
 ## Part 1: Complexity measurement
 
 Ten python functions with the highest _cyclomatic complexity_ (CNN) according to lizard:
