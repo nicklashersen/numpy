@@ -126,7 +126,7 @@ class build_src(build_ext.build_ext):
 
         # py_modules_dict is used in build_py.find_package_modules
         self.py_modules_dict = {}
-        finalize_options_check_flags()
+        self.finalize_options_check_flags()
 
         # use options from build_ext command
         build_ext = self.get_finalized_command('build_ext')

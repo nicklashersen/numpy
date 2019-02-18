@@ -533,7 +533,7 @@ def CCompiler_customize(self, dist, need_cxx=0):
         except (AttributeError, ValueError):
             pass
 
-        CCompiler_customize_set_compiler()
+        self.CCompiler_customize_set_compiler()
 
     # check if compiler supports gcc style automatic dependencies
     # run on every extension so skip for known good compilers
