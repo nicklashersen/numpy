@@ -1,0 +1,11 @@
+add_data_files@1184-1333@./distutils/misc_util.py : 26
+add_data_dir@1054-1173@./distutils/misc_util.py : 33
+finalize_options@86-142@./distutils/command/build_src.py : 31
+CCompiler_customize@468-547@./distutils/ccompiler.py : 17
+get_paths@663-716@./distutils/system_info.py : 29
+get_atlas_version@1465-1535@./distutils/system_info.py : 26
+setup@109-171@./distutils/core.py : 20
+_exec_command@265-320@./distutils/exec_command.py : 18
+_scalar_str@115-169@./core/_dtype.py : 20
+long_double_representation@345-401@./core/setup_common.py : 23
+

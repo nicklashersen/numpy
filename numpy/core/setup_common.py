@@ -6,6 +6,8 @@ import warnings
 import copy
 import binascii
 
+import secoverage
+
 from numpy.distutils.misc_util import mingw32
 
 
@@ -356,46 +358,76 @@ def long_double_representation(lines):
     read = [''] * 32
     saw = None
     for line in lines:
+        secoverage.write_coverage("long_double_representation-1")
         # we skip the first word, as od -b output an index at the beginning of
         # each line
         for w in line.split()[1:]:
+            secoverage.write_coverage("long_double_representation-2")
             read.pop(0)
             read.append(w)
 
             # If the end of read is equal to the after_sequence, read contains
             # the long double
             if read[-8:] == _AFTER_SEQ:
+                secoverage.write_coverage("long_double_representation-3")
                 saw = copy.copy(read)
                 # if the content was 12 bytes, we only have 32 - 8 - 12 = 12
                 # "before" bytes. In other words the first 4 "before" bytes went
                 # past the sliding window.
                 if read[:12] == _BEFORE_SEQ[4:]:
+                    secoverage.write_coverage("long_double_representation-4")
                     if read[12:-8] == _INTEL_EXTENDED_12B:
+                        secoverage.write_coverage("long_double_representation-5")
                         return 'INTEL_EXTENDED_12_BYTES_LE'
+                    else:
+                        secoverage.write_coverage("long_double_representation-6")
                     if read[12:-8] == _MOTOROLA_EXTENDED_12B:
+                        secoverage.write_coverage("long_double_representation-7")
                         return 'MOTOROLA_EXTENDED_12_BYTES_BE'
+                    else:
+                        secoverage.write_coverage("long_double_representation-8")
+
                 # if the content was 16 bytes, we are left with 32-8-16 = 16
                 # "before" bytes, so 8 went past the sliding window.
                 elif read[:8] == _BEFORE_SEQ[8:]:
+                    secoverage.write_coverage("long_double_representation-9")
                     if read[8:-8] == _INTEL_EXTENDED_16B:
+                        secoverage.write_coverage("long_double_representation-10")
                         return 'INTEL_EXTENDED_16_BYTES_LE'
                     elif read[8:-8] == _IEEE_QUAD_PREC_BE:
+                        secoverage.write_coverage("long_double_representation-11")
                         return 'IEEE_QUAD_BE'
                     elif read[8:-8] == _IEEE_QUAD_PREC_LE:
+                        secoverage.write_coverage("long_double_representation-12")
                         return 'IEEE_QUAD_LE'
                     elif read[8:-8] == _IBM_DOUBLE_DOUBLE_LE:
+                        secoverage.write_coverage("long_double_representation-13")
                         return 'IBM_DOUBLE_DOUBLE_LE'
                     elif read[8:-8] == _IBM_DOUBLE_DOUBLE_BE:
+                        secoverage.write_coverage("long_double_representation-14")
                         return 'IBM_DOUBLE_DOUBLE_BE'
+                    else:
+                        secoverage.write_coverage("long_double_representation-15")
                 # if the content was 8 bytes, left with 32-8-8 = 16 bytes
                 elif read[:16] == _BEFORE_SEQ:
+                    secoverage.write_coverage("long_double_representation-16")
                     if read[16:-8] == _IEEE_DOUBLE_LE:
+                        secoverage.write_coverage("long_double_representation-17")
                         return 'IEEE_DOUBLE_LE'
                     elif read[16:-8] == _IEEE_DOUBLE_BE:
+                        secoverage.write_coverage("long_double_representation-18")
                         return 'IEEE_DOUBLE_BE'
+                    else:
+                        secoverage.write_coverage("long_double_representation-10")
+                else:
+                    secoverage.write_coverage("long_double_representation-20")
+            else:
+                secoverage.write_coverage("long_double_representation-21")
 
     if saw is not None:
+        secoverage.write_coverage("long_double_representation-22")
         raise ValueError("Unrecognized format (%s)" % saw)
     else:
+        secoverage.write_coverage("long_double_representation-23")
         # We never detected the after_sequence
         raise ValueError("Could not lock sequences (%s)" % saw)

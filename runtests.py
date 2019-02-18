@@ -52,6 +52,8 @@ else:
 import sys
 import os
 
+import secoverage
+
 # In case we are run from the source directory, we don't want to import the
 # project from there:
 sys.path.pop(0)
@@ -64,6 +66,9 @@ from argparse import ArgumentParser, REMAINDER
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))
 
 def main(argv):
+
+    secoverage.init()
+
     parser = ArgumentParser(usage=__doc__.lstrip())
     parser.add_argument("--verbose", "-v", action="count", default=1,
                         help="more verbosity")
@@ -299,6 +304,8 @@ def main(argv):
                       tests=tests)
     finally:
         os.chdir(cwd)
+
+    secoverage.coverage_file_close()
 
     if isinstance(result, bool):
         sys.exit(0 if result else 1)

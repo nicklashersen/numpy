@@ -61,6 +61,8 @@ import locale
 from numpy.distutils.misc_util import is_sequence, make_temp_file
 from numpy.distutils import log
 
+import secoverage
+
 def filepath_from_subprocess_output(output):
     """
     Convert `bytes` in the encoding used by a subprocess into a filesystem-appropriate `str`.
@@ -267,23 +269,36 @@ def _exec_command(command, use_shell=None, use_tee = None, **env):
     Internal workhorse for exec_command().
     """
     if use_shell is None:
+        secoverage.write_coverage("_exec_command-1")
         use_shell = os.name=='posix'
+    else:
+        secoverage.write_coverage("_exec_command-2")
     if use_tee is None:
+        secoverage.write_coverage("_exec_command-3")
         use_tee = os.name=='posix'
+    else:
+        secoverage.write_coverage("_exec_command-4")
 
     if os.name == 'posix' and use_shell:
+        secoverage.write_coverage("_exec_command-5")
         # On POSIX, subprocess always uses /bin/sh, override
         sh = os.environ.get('SHELL', '/bin/sh')
         if is_sequence(command):
+            secoverage.write_coverage("_exec_command-6")
             command = [sh, '-c', ' '.join(command)]
         else:
+            secoverage.write_coverage("_exec_command-7")
             command = [sh, '-c', command]
         use_shell = False
 
     elif os.name == 'nt' and is_sequence(command):
+        secoverage.write_coverage("_exec_command-8")
         # On Windows, join the string for CreateProcess() ourselves as
         # subprocess does it a bit differently
         command = ' '.join(_quote_arg(arg) for arg in command)
+
+    else:
+        secoverage.write_coverage("_exec_command-9")
 
     # Inherit environment by default
     env = env or None
@@ -297,26 +312,40 @@ def _exec_command(command, use_shell=None, use_tee = None, **env):
                                 stderr=subprocess.STDOUT,
                                 universal_newlines=False)
     except EnvironmentError:
+        secoverage.write_coverage("_exec_command-10")
         # Return 127, as os.spawn*() and /bin/sh do
         return 127, ''
 
     text, err = proc.communicate()
     mylocale = locale.getpreferredencoding(False)
     if mylocale is None:
+        secoverage.write_coverage("_exec_command-11")
         mylocale = 'ascii'
+    else:
+        secoverage.write_coverage("_exec_command-12")
     text = text.decode(mylocale, errors='replace')
     text = text.replace('\r\n', '\n')
     # Another historical oddity
     if text[-1:] == '\n':
+        secoverage.write_coverage("_exec_command-13")
         text = text[:-1]
+    else:
+        secoverage.write_coverage("_exec_command-14")
 
     # stdio uses bytes in python 2, so to avoid issues, we simply
     # remove all non-ascii characters
     if sys.version_info < (3, 0):
+        secoverage.write_coverage("_exec_command-15")
         text = text.encode('ascii', errors='replace')
+    else:
+        secoverage.write_coverage("_exec_command-16")
 
     if use_tee and text:
+        secoverage.write_coverage("_exec_command-17")
         print(text)
+    else:
+        secoverage.write_coverage("_exec_command-18")
+
     return proc.returncode, text
 
 

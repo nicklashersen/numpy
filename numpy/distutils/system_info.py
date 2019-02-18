@@ -157,6 +157,8 @@ import distutils.ccompiler
 import tempfile
 import shutil
 
+import secoverage
+
 
 # Determine number of bits
 import platform
@@ -664,53 +666,96 @@ class system_info(object):
         dirs = self.cp.get(section, key).split(os.pathsep)
         env_var = self.dir_env_var
         if env_var:
+            secoverage.write_coverage("get_paths-1")
             if is_sequence(env_var):
+                secoverage.write_coverage("get_paths-2")
                 e0 = env_var[-1]
                 for e in env_var:
+                    secoverage.write_coverage("get_paths-3")
                     if e in os.environ:
+                        secoverage.write_coverage("get_paths-4")
                         e0 = e
                         break
+                    else:
+                        secoverage.write_coverage("get_paths-5")
                 if not env_var[0] == e0:
+                    secoverage.write_coverage("get_paths-6")
                     log.info('Setting %s=%s' % (env_var[0], e0))
+                else:
+                    secoverage.write_coverage("get_paths-7")
                 env_var = e0
+            else:
+                secoverage.write_coverage("get_paths-8")
+        else:
+            secoverage.write_coverage("get_paths-9")
         if env_var and env_var in os.environ:
+            secoverage.write_coverage("get_paths-10")
             d = os.environ[env_var]
             if d == 'None':
+                secoverage.write_coverage("get_paths-11")
                 log.info('Disabled %s: %s',
                          self.__class__.__name__, '(%s is None)'
                          % (env_var,))
                 return []
+            else:
+                secoverage.write_coverage("get_paths-12")
             if os.path.isfile(d):
+                secoverage.write_coverage("get_paths-13")
                 dirs = [os.path.dirname(d)] + dirs
                 l = getattr(self, '_lib_names', [])
                 if len(l) == 1:
+                    secoverage.write_coverage("get_paths-13")
                     b = os.path.basename(d)
                     b = os.path.splitext(b)[0]
                     if b[:3] == 'lib':
+                        secoverage.write_coverage("get_paths-14")
                         log.info('Replacing _lib_names[0]==%r with %r' \
                               % (self._lib_names[0], b[3:]))
                         self._lib_names[0] = b[3:]
+                    else:
+                        secoverage.write_coverage("get_paths-15")
+                else:
+                    secoverage.write_coverage("get_paths-16")
             else:
+                secoverage.write_coverage("get_paths-17")
                 ds = d.split(os.pathsep)
                 ds2 = []
                 for d in ds:
+                    secoverage.write_coverage("get_paths-18")
                     if os.path.isdir(d):
+                        secoverage.write_coverage("get_paths-19")
                         ds2.append(d)
                         for dd in ['include', 'lib']:
+                            secoverage.write_coverage("get_paths-20")
                             d1 = os.path.join(d, dd)
                             if os.path.isdir(d1):
+                                secoverage.write_coverage("get_paths-21")
                                 ds2.append(d1)
+                            else:
+                                secoverage.write_coverage("get_paths-22")
+                    else:
+                        secoverage.write_coverage("get_paths-23")
                 dirs = ds2 + dirs
+        else:
+            secoverage.write_coverage("get_paths-24")
+
         default_dirs = self.cp.get(self.section, key).split(os.pathsep)
         dirs.extend(default_dirs)
         ret = []
         for d in dirs:
+            secoverage.write_coverage("get_paths-25")
             if len(d) > 0 and not os.path.isdir(d):
+                secoverage.write_coverage("get_paths-26")
                 warnings.warn('Specified path %s is invalid.' % d, stacklevel=2)
                 continue
 
+            else:
+                secoverage.write_coverage("get_paths-27")
             if d not in ret:
+                secoverage.write_coverage("get_paths-28")
                 ret.append(d)
+            else:
+                secoverage.write_coverage("get_paths-29")
 
         log.debug('( %s = %s )', key, ':'.join(ret))
         return ret
@@ -1467,7 +1512,10 @@ def get_atlas_version(**config):
     library_dirs = config.get('library_dirs', [])
     key = (tuple(libraries), tuple(library_dirs))
     if key in _cached_atlas_version:
+        secoverage.write_coverage("get_atlas_version-1")
         return _cached_atlas_version[key]
+    else:
+        secoverage.write_coverage("get_atlas_version-2")
     c = cmd_config(Distribution())
     atlas_version = None
     info = {}
@@ -1476,11 +1524,13 @@ def get_atlas_version(**config):
                             libraries=libraries, library_dirs=library_dirs,
                             use_tee=(system_info.verbosity > 0))
         if s and re.search(r'undefined reference to `_gfortran', o, re.M):
+            secoverage.write_coverage("get_atlas_version-3")
             s, o = c.get_output(atlas_version_c_text,
                                 libraries=libraries + ['gfortran'],
                                 library_dirs=library_dirs,
                                 use_tee=(system_info.verbosity > 0))
             if not s:
+                secoverage.write_coverage("get_atlas_version-4")
                 warnings.warn("""
 *****************************************************
 Linkage with ATLAS requires gfortran. Use
@@ -1493,41 +1543,72 @@ Make sure that -lgfortran is used for C++ extensions.
 """, stacklevel=2)
                 dict_append(info, language='f90',
                             define_macros=[('ATLAS_REQUIRES_GFORTRAN', None)])
+            else:
+                secoverage.write_coverage("get_atlas_version-5")
+        else:
+            secoverage.write_coverage("get_atlas_version-6")
     except Exception:  # failed to get version from file -- maybe on Windows
         # look at directory name
+        secoverage.write_coverage("get_atlas_version-7")
         for o in library_dirs:
+            secoverage.write_coverage("get_atlas_version-8")
             m = re.search(r'ATLAS_(?P<version>\d+[.]\d+[.]\d+)_', o)
             if m:
+                secoverage.write_coverage("get_atlas_version-9")
                 atlas_version = m.group('version')
+            else:
+                secoverage.write_coverage("get_atlas_version-10")
             if atlas_version is not None:
+                secoverage.write_coverage("get_atlas_version-11")
                 break
+            else:
+                secoverage.write_coverage("get_atlas_version-12")
 
         # final choice --- look at ATLAS_VERSION environment
         #   variable
         if atlas_version is None:
+            secoverage.write_coverage("get_atlas_version-13")
             atlas_version = os.environ.get('ATLAS_VERSION', None)
+        else:
+            secoverage.write_coverage("get_atlas_version-14")
         if atlas_version:
+            secoverage.write_coverage("get_atlas_version-15")
             dict_append(info, define_macros=[(
                 'ATLAS_INFO', _c_string_literal(atlas_version))
             ])
         else:
+            secoverage.write_coverage("get_atlas_version-16")
             dict_append(info, define_macros=[('NO_ATLAS_INFO', -1)])
         return atlas_version or '?.?.?', info
 
     if not s:
+        secoverage.write_coverage("get_atlas_version-17")
         m = re.search(r'ATLAS version (?P<version>\d+[.]\d+[.]\d+)', o)
         if m:
+            secoverage.write_coverage("get_atlas_version-18")
             atlas_version = m.group('version')
+        else:
+            secoverage.write_coverage("get_atlas_version-19")
+    else:
+        secoverage.write_coverage("get_atlas_version-20")
+
     if atlas_version is None:
+        secoverage.write_coverage("get_atlas_version-21")
         if re.search(r'undefined symbol: ATL_buildinfo', o, re.M):
+            secoverage.write_coverage("get_atlas_version-22")
             atlas_version = '3.2.1_pre3.3.6'
         else:
+            secoverage.write_coverage("get_atlas_version-23")
             log.info('Status: %d', s)
             log.info('Output: %s', o)
+    else:
+        secoverage.write_coverage("get_atlas_version-24")
 
     if atlas_version == '3.2.1_pre3.3.6':
+        secoverage.write_coverage("get_atlas_version-25")
         dict_append(info, define_macros=[('NO_ATLAS_INFO', -2)])
     else:
+        secoverage.write_coverage("get_atlas_version-26")
         dict_append(info, define_macros=[(
             'ATLAS_INFO', _c_string_literal(atlas_version))
         ])

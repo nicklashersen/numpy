@@ -8,10 +8,13 @@ import sys
 import shlex
 import copy
 
+import secoverage
+
 from distutils.command import build_ext
 from distutils.dep_util import newer_group, newer
 from distutils.util import get_platform
 from distutils.errors import DistutilsError, DistutilsSetupError
+
 
 
 # this import can't be done here, as it uses numpy stuff only available
@@ -84,62 +87,120 @@ class build_src(build_ext.build_ext):
         self.swig = None
 
     def finalize_options(self):
+
         self.set_undefined_options('build',
                                    ('build_base', 'build_base'),
                                    ('build_lib', 'build_lib'),
                                    ('force', 'force'))
         if self.package is None:
+            secoverage.write_coverage("finalize_options-1")
             self.package = self.distribution.ext_package
+        else:
+            secoverage.write_coverage("finalize_options-2")
+
         self.extensions = self.distribution.ext_modules
-        self.libraries = self.distribution.libraries or []
-        self.py_modules = self.distribution.py_modules or []
-        self.data_files = self.distribution.data_files or []
+
+        if self.distribution.libraries is None:
+            secoverage.write_coverage("finalize_options-3")
+            self.libraries = []
+        else:
+            secoverage.write_coverage("finalize_options-4")
+            self.libraries = self.distribution.libraries
+
+        if self.distribution.py_modules is None:
+            secoverage.write_coverage("finalize_options-5")
+            self.py_modules = []
+        else:
+            secoverage.write_coverage("finalize_options-6")
+            self.py_modules = self.distribution.py_modules
+
+
+        if self.distribution.data_files is None:
+            secoverage.write_coverage("finalize_options-7")
+            self.data_files = []
+        else:
+            secoverage.write_coverage("finalize_options-8")
+            self.data_files = self.distribution.data_files
+
 
         if self.build_src is None:
+            secoverage.write_coverage("finalize_options-9")
             plat_specifier = ".%s-%s" % (get_platform(), sys.version[0:3])
             self.build_src = os.path.join(self.build_base, 'src'+plat_specifier)
+        else:
+            secoverage.write_coverage("finalize_options-10")
 
         # py_modules_dict is used in build_py.find_package_modules
         self.py_modules_dict = {}
 
         if self.f2pyflags:
+            secoverage.write_coverage("finalize_options-11")
             if self.f2py_opts:
+                secoverage.write_coverage("finalize_options-12")
                 log.warn('ignoring --f2pyflags as --f2py-opts already used')
             else:
+                secoverage.write_coverage("finalize_options-13")
                 self.f2py_opts = self.f2pyflags
             self.f2pyflags = None
+        else:
+            secoverage.write_coverage("finalize_options-14")
         if self.f2py_opts is None:
+            secoverage.write_coverage("finalize_options-15")
             self.f2py_opts = []
         else:
+            secoverage.write_coverage("finalize_options-16")
             self.f2py_opts = shlex.split(self.f2py_opts)
 
         if self.swigflags:
+            secoverage.write_coverage("finalize_options-17")
             if self.swig_opts:
+                secoverage.write_coverage("finalize_options-18")
                 log.warn('ignoring --swigflags as --swig-opts already used')
             else:
+                secoverage.write_coverage("finalize_options-19")
                 self.swig_opts = self.swigflags
             self.swigflags = None
+        else:
+            secoverage.write_coverage("finalize_options-20")
+
 
         if self.swig_opts is None:
+            secoverage.write_coverage("finalize_options-21")
             self.swig_opts = []
         else:
+            secoverage.write_coverage("finalize_options-22")
             self.swig_opts = shlex.split(self.swig_opts)
 
         # use options from build_ext command
         build_ext = self.get_finalized_command('build_ext')
         if self.inplace is None:
+            secoverage.write_coverage("finalize_options-23")
             self.inplace = build_ext.inplace
+        else:
+            secoverage.write_coverage("finalize_options-24")
+
         if self.swig_cpp is None:
+            secoverage.write_coverage("finalize_options-25")
             self.swig_cpp = build_ext.swig_cpp
+        else:
+            secoverage.write_coverage("finalize_options-26")
+
         for c in ['swig', 'swig_opt']:
+            secoverage.write_coverage("finalize_options-27")
             o = '--'+c.replace('_', '-')
             v = getattr(build_ext, c, None)
             if v:
+                secoverage.write_coverage("finalize_options-28")
                 if getattr(self, c):
+                    secoverage.write_coverage("finalize_options-29")
                     log.warn('both build_src and build_ext define %s option' % (o))
                 else:
+                    secoverage.write_coverage("finalize_options-30")
                     log.info('using "%s=%s" option from build_ext command' % (o, v))
                     setattr(self, c, v)
+            else:
+                secoverage.write_coverage("finalize_options-31")
+
 
     def run(self):
         log.info("build_src")
