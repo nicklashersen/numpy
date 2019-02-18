@@ -1471,6 +1471,50 @@ int main(void) {
 }
 '''
 
+def _check_library_dirs(self, library_dirs):
+    """
+    Check the library directories for ATLAS version.
+    """
+
+    atlas_version = None
+
+    for o in library_dirs:
+        m = re.search(r'ATLAS_(?P<version>\d+[.]\d+[.]\d+)_', o)
+        if m:
+            atlas_version = m.group('version')
+        if atlas_version is not None:
+            break
+
+    return atlas_version
+
+def _add_atlas_info(self, info, atlas_version, check_value=None):
+    """
+    Add ATLAS version information to the given info dictionary.
+    """
+
+    if check_value and atlas_version == check_value:
+        dict_append(info, define_macros=[('NO_ATLAS_INFO', -2)])
+    elif atlas_version:
+        dict_append(info, define_macros=[('NO_ATLAS_INFO', -1)])
+    else:
+        dict_append(info, define_macros=[(
+            'ATLAS_INFO', _c_string_literal(atlas_version))
+        ])
+
+    return
+
+def _search_atlas_info(self, string):
+    """
+    Search a string for ATLAS version information.
+    """
+
+    atlas_version = None
+    m = re.search(r'ATLAS version (?P<version>\d+[.]\d+[.]\d+)', string)
+    if m:
+        atlas_version = m.group('version')
+    
+    return atlas_version
+
 _cached_atlas_version = {}
 
 
@@ -1507,29 +1551,17 @@ Make sure that -lgfortran is used for C++ extensions.
                             define_macros=[('ATLAS_REQUIRES_GFORTRAN', None)])
     except Exception:  # failed to get version from file -- maybe on Windows
         # look at directory name
-        for o in library_dirs:
-            m = re.search(r'ATLAS_(?P<version>\d+[.]\d+[.]\d+)_', o)
-            if m:
-                atlas_version = m.group('version')
-            if atlas_version is not None:
-                break
+        atlas_version = self._check_library_dirs(library_dirs)
 
         # final choice --- look at ATLAS_VERSION environment
         #   variable
         if atlas_version is None:
             atlas_version = os.environ.get('ATLAS_VERSION', None)
-        if atlas_version:
-            dict_append(info, define_macros=[(
-                'ATLAS_INFO', _c_string_literal(atlas_version))
-            ])
-        else:
-            dict_append(info, define_macros=[('NO_ATLAS_INFO', -1)])
+        self._add_atlas_info(info, atlas_version)
         return atlas_version or '?.?.?', info
 
     if not s:
-        m = re.search(r'ATLAS version (?P<version>\d+[.]\d+[.]\d+)', o)
-        if m:
-            atlas_version = m.group('version')
+        atlas_version = self._search_atlas_info(o)
     if atlas_version is None:
         if re.search(r'undefined symbol: ATL_buildinfo', o, re.M):
             atlas_version = '3.2.1_pre3.3.6'
@@ -1537,12 +1569,7 @@ Make sure that -lgfortran is used for C++ extensions.
             log.info('Status: %d', s)
             log.info('Output: %s', o)
 
-    if atlas_version == '3.2.1_pre3.3.6':
-        dict_append(info, define_macros=[('NO_ATLAS_INFO', -2)])
-    else:
-        dict_append(info, define_macros=[(
-            'ATLAS_INFO', _c_string_literal(atlas_version))
-        ])
+    self._add_atlas_info(info, atlas_version, '3.2.1_pre3.3.6')
     result = _cached_atlas_version[key] = atlas_version, info
     return result
 
