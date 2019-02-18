@@ -260,17 +260,22 @@ def exec_command(command, execute_in='', use_shell=None, use_tee=None,
         _update_environment(**oldenv)
 
     return st
-
-
-def _exec_command(command, use_shell=None, use_tee = None, **env):
-    """
-    Internal workhorse for exec_command().
-    """
+# Sets a default value of use_shell if none is set
+def _exec_command_use_shell(use_shell):
     if use_shell is None:
-        use_shell = os.name=='posix'
-    if use_tee is None:
-        use_tee = os.name=='posix'
+        return os.name=='posix'
+    else:
+        return use_shell
 
+# Sets a default value of use_tee if none is set
+def _exec_command_use_tee(use_tee):
+    if use_tee is None:
+        return os.name=='posix'
+    else:
+        return use_tee
+
+# Customizes the command to execute for different shells
+def _exec_command_customize_command(command, use_shell):
     if os.name == 'posix' and use_shell:
         # On POSIX, subprocess always uses /bin/sh, override
         sh = os.environ.get('SHELL', '/bin/sh')
@@ -278,12 +283,30 @@ def _exec_command(command, use_shell=None, use_tee = None, **env):
             command = [sh, '-c', ' '.join(command)]
         else:
             command = [sh, '-c', command]
-        use_shell = False
 
     elif os.name == 'nt' and is_sequence(command):
         # On Windows, join the string for CreateProcess() ourselves as
         # subprocess does it a bit differently
         command = ' '.join(_quote_arg(arg) for arg in command)
+    
+    return command
+
+def _exec_command(command, use_shell=None, use_tee = None, **env):
+    """
+    Internal workhorse for exec_command().
+    """
+
+    # Refactored into a new function
+    use_shell = _exec_command_use_shell(use_shell)
+
+    # Refactored into a new function
+    use_tee = _exec_command_use_tee(use_tee)
+
+    # Refactored into a new function
+    command = _exec_command_customize_command(command, use_shell)
+
+    if os.name == 'posix' and use_shell:
+        use_shell = False
 
     # Inherit environment by default
     env = env or None

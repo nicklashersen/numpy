@@ -83,25 +83,7 @@ class build_src(build_ext.build_ext):
         self.swig_cpp = None
         self.swig = None
 
-    def finalize_options(self):
-        self.set_undefined_options('build',
-                                   ('build_base', 'build_base'),
-                                   ('build_lib', 'build_lib'),
-                                   ('force', 'force'))
-        if self.package is None:
-            self.package = self.distribution.ext_package
-        self.extensions = self.distribution.ext_modules
-        self.libraries = self.distribution.libraries or []
-        self.py_modules = self.distribution.py_modules or []
-        self.data_files = self.distribution.data_files or []
-
-        if self.build_src is None:
-            plat_specifier = ".%s-%s" % (get_platform(), sys.version[0:3])
-            self.build_src = os.path.join(self.build_base, 'src'+plat_specifier)
-
-        # py_modules_dict is used in build_py.find_package_modules
-        self.py_modules_dict = {}
-
+    def finalize_options_check_flags(self):
         if self.f2pyflags:
             if self.f2py_opts:
                 log.warn('ignoring --f2pyflags as --f2py-opts already used')
@@ -124,6 +106,27 @@ class build_src(build_ext.build_ext):
             self.swig_opts = []
         else:
             self.swig_opts = shlex.split(self.swig_opts)
+        
+
+    def finalize_options(self):
+        self.set_undefined_options('build',
+                                   ('build_base', 'build_base'),
+                                   ('build_lib', 'build_lib'),
+                                   ('force', 'force'))
+        if self.package is None:
+            self.package = self.distribution.ext_package
+        self.extensions = self.distribution.ext_modules
+        self.libraries = self.distribution.libraries or []
+        self.py_modules = self.distribution.py_modules or []
+        self.data_files = self.distribution.data_files or []
+
+        if self.build_src is None:
+            plat_specifier = ".%s-%s" % (get_platform(), sys.version[0:3])
+            self.build_src = os.path.join(self.build_base, 'src'+plat_specifier)
+
+        # py_modules_dict is used in build_py.find_package_modules
+        self.py_modules_dict = {}
+        self.finalize_options_check_flags()
 
         # use options from build_ext command
         build_ext = self.get_finalized_command('build_ext')

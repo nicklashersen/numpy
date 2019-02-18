@@ -140,6 +140,21 @@ def setup(**attr):
         _dict_append(new_attr, **config)
 
     # Move extension source libraries to libraries
+    # Refactored into separate function
+    libraries = setup_copy_libraries(new_attr)
+
+    # sources in ext_modules or libraries may contain header files
+    if ('ext_modules' in new_attr or 'libraries' in new_attr) \
+       and 'headers' not in new_attr:
+        new_attr['headers'] = []
+
+    # Use our custom NumpyDistribution class instead of distutils' one
+    new_attr['distclass'] = NumpyDistribution
+
+    return old_setup(**new_attr)
+
+# Move extension source libraries to libraries
+def setup_copy_libraries(new_attr):
     libraries = []
     for ext in new_attr.get('ext_modules', []):
         new_libraries = []
@@ -154,21 +169,14 @@ def setup(**attr):
                 raise TypeError("invalid description of extension module "
                                 "library %r" % (item,))
         ext.libraries = new_libraries
+
     if libraries:
         if 'libraries' not in new_attr:
             new_attr['libraries'] = []
-        for item in libraries:
-            _check_append_library(new_attr['libraries'], item)
+            for item in libraries:
+                _check_append_library(new_attr['libraries'], item)
 
-    # sources in ext_modules or libraries may contain header files
-    if ('ext_modules' in new_attr or 'libraries' in new_attr) \
-       and 'headers' not in new_attr:
-        new_attr['headers'] = []
-
-    # Use our custom NumpyDistribution class instead of distutils' one
-    new_attr['distclass'] = NumpyDistribution
-
-    return old_setup(**new_attr)
+    return libraries
 
 def _check_append_library(libraries, item):
     for libitem in libraries:
