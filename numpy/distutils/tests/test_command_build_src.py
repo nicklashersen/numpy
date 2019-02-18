@@ -21,3 +21,18 @@ class TestBuildSrc(object):
         instance.finalize_options()
 
         assert_(instance.f2py_opts == ['--2d-numpy', '--g3-numpy'])
+
+    def test_swig_opts(self):
+        """
+        Test that finalize_options correctly handles swig_opts.
+        """
+
+        distribution = Distribution()
+        instance = build_src(distribution)
+        instance.initialize_options()
+
+        instance.swig_opts = '-c++ -python -o wrap.cpp'
+
+        instance.finalize_options()
+
+        assert_(instance.swig_opts == ['-c++', '-python', '-o', 'wrap.cpp'])
