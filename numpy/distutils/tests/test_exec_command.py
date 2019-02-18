@@ -217,6 +217,10 @@ class TestExecCommand(object):
     
     @patch('locale.getpreferredencoding')
     def test_no_locale(self, mocked_method):
+        """
+        Test that the method works as intended even if the locale is not set.
+        """
+
         mocked_method.return_value = None
         with redirect_stdout(StringIO()):
             with redirect_stderr(StringIO()):
