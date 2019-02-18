@@ -1107,31 +1107,57 @@ class Configuration(object):
                 car.dat
 
         """
+        """
+        Calculate the cyclomatic complexity of five python functions by hand according to: 
+    
+        CCN = pi - s + 2
+        
+        if...else - increases pi by 1
+        if...elseif...else - increases pi with 2
+        while and for increase pi by 1 each
+        return and raise increase s by 1 each
+        assert does not affect the result because it increases pi by 1 and s by 1 so they cancel out
+        Remember to count the return at the end of the function even if it is not printed
+        """
+        # pi += 1
         if is_sequence(data_path):
             d, data_path = data_path
         else:
             d = None
+        # pi += 1
         if is_sequence(data_path):
             [self.add_data_dir((d, p)) for p in data_path]
+            # s += 1
             return
+        # pi += 1
         if not is_string(data_path):
+            # s += 1
             raise TypeError("not a string: %r" % (data_path,))
+        # pi += 1
         if d is None:
+            # pi += 1
             if os.path.isabs(data_path):
+                # s += 1
                 return self.add_data_dir((os.path.basename(data_path), data_path))
+            # s += 1
             return self.add_data_dir((data_path, data_path))
         paths = self.paths(data_path, include_non_existing=False)
+        # pi += 1
         if is_glob_pattern(data_path):
+            # pi += 1
             if is_glob_pattern(d):
                 pattern_list = allpath(d).split(os.sep)
                 pattern_list.reverse()
                 # /a/*//b/ -> /a/*/b
                 rl = list(range(len(pattern_list)-1)); rl.reverse()
+                # pi += 1
                 for i in rl:
+                    # pi += 1
                     if not pattern_list[i]:
                         del pattern_list[i]
-                #
+                # pi += 1
                 for path in paths:
+                    # pi += 1
                     if not os.path.isdir(path):
                         print('Not a directory, skipping', path)
                         continue
@@ -1140,9 +1166,13 @@ class Configuration(object):
                     path_list.reverse()
                     target_list = []
                     i = 0
+                    # pi += 1
                     for s in pattern_list:
+                        # pi += 1
                         if is_glob_pattern(s):
+                            # pi += 1
                             if i>=len(path_list):
+                                # s += 1
                                 raise ValueError('cannot fill pattern %r with %r' \
                                       % (d, path))
                             target_list.append(path_list[i])
@@ -1150,24 +1180,29 @@ class Configuration(object):
                             assert s==path_list[i], repr((s, path_list[i], data_path, d, path, rpath))
                             target_list.append(s)
                         i += 1
+                    # pi += 1
                     if path_list[i:]:
                         self.warn('mismatch of pattern_list=%s and path_list=%s'\
                                   % (pattern_list, path_list))
                     target_list.reverse()
                     self.add_data_dir((os.sep.join(target_list), path))
             else:
+                # pi += 1
                 for path in paths:
                     self.add_data_dir((d, path))
+            # s += 1
             return
         assert not is_glob_pattern(d), repr(d)
 
         dist = self.get_distribution()
+        # pi += 1
         if dist is not None and dist.data_files is not None:
             data_files = dist.data_files
         else:
             data_files = self.data_files
-
+        # pi += 1
         for path in paths:
+            # pi += 1
             for d1, f in list(general_source_directories_files(path)):
                 target_path = os.path.join(self.path_in_package, d, d1)
                 data_files.append((target_path, f))
@@ -1180,6 +1215,7 @@ class Configuration(object):
             for f in files:
                 data_dict[p].add(f)
         self.data_files[:] = [(p, list(files)) for p, files in data_dict.items()]
+        # CCN = 19 - 6 + 2 = 15
 
     def add_data_files(self,*files):
         """Add data files to configuration data_files.
