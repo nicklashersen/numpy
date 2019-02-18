@@ -5,6 +5,8 @@ import sys
 from tempfile import TemporaryFile
 from unittest.mock import patch
 
+import pytest
+
 from numpy.distutils import exec_command
 from numpy.distutils.exec_command import get_pythonexe
 from numpy.testing import tempdir, assert_
@@ -215,6 +217,7 @@ class TestExecCommand(object):
                 self.check_execute_in(use_tee=0)
                 self.check_execute_in(use_tee=1)
     
+    @pytest.mark.skipif(os.name != 'posix', reason="requires posix to run")
     @patch('locale.getpreferredencoding')
     def test_no_locale(self, mocked_method):
         """
