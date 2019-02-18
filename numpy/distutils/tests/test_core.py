@@ -6,7 +6,7 @@ from unittest import mock
 from numpy.distutils.core import setup as core_setup
 
 class _lib_class:
-    libraries = 1
+    libraries = [ None ]
 
 class _setup_return_class:
     help = True
