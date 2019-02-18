@@ -466,6 +466,17 @@ def CCompiler_show_customization(self):
 replace_method(CCompiler, 'show_customization', CCompiler_show_customization)
 
 def CCompiler_customize_set_compiler(self):
+    """
+    Set the correct C++ compiler based on the C compiler.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+    """
     if hasattr(self, 'compiler') and 'cc' in self.compiler[0]:
         if not self.compiler_cxx:
             if self.compiler[0].startswith('gcc'):
