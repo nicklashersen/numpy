@@ -118,6 +118,40 @@ class Temp2Info(_system_info):
     """For testing purposes"""
     section = 'temp2'
 
+def test_get_paths_env_var_is_file():
+    """
+        Testing the get_paths function with the path environment variable
+        set to the __init__.py file in the current working diretory.
+        The directory of the file, which is the current working directory,
+        and "." should be returned.
+        An additional path to the current working directory is added to ensure
+        that get_paths() does not return duplicates.
+    """
+
+    os.environ["NUMPY_GET_PATHS_TEST_ENV"] = os.getcwd() + "/__init__.py" + ":" + os.getcwd()
+    sysinfo = system_info()
+    sysinfo.dir_env_var = "NUMPY_GET_PATHS_TEST_ENV"
+
+    paths = sysinfo.get_paths('ALL', 'src_dirs')
+    assert_equal(paths, [os.getcwd(), "."])
+    del os.environ["NUMPY_GET_PATHS_TEST_ENV"]
+
+def test_get_paths_env_var_is_not_file():
+    """
+        Testing the get_paths function with the path environment variable
+        set to the current working diretory.
+        The current working directory should be returned and "." should be returned.
+        An additional path to the current working directory is added to ensure
+        that get_paths() does not return duplicates.
+        """
+
+    os.environ["NUMPY_GET_PATHS_TEST_ENV"] = os.getcwd() + ":" + os.getcwd()
+    sysinfo = system_info()
+    sysinfo.dir_env_var = "NUMPY_GET_PATHS_TEST_ENV"
+
+    paths = sysinfo.get_paths('ALL', 'src_dirs')
+    assert_equal(paths, [os.getcwd(), "."])
+    del os.environ["NUMPY_GET_PATHS_TEST_ENV"]
 
 class TestSystemInfoReading(object):
 
