@@ -1181,6 +1181,60 @@ class Configuration(object):
                 data_dict[p].add(f)
         self.data_files[:] = [(p, list(files)) for p, files in data_dict.items()]
 
+    def _add_files_list(self, files, d=None):
+        """
+        Add a list of files with an optional directory
+        """
+
+        for f in files:
+            if d is not None:
+                self.add_data_files((d, f))
+            else:
+                self.add_data_files(f)
+
+    def _get_sequence(self, files):
+        """
+        Checks if the files are a sequence and returns the directory and files.
+        """
+
+        d = None
+        if is_sequence(files[0]):
+            d, files = files[0]
+
+        return d, files
+
+    def _get_directory_name(self, filepath):
+        """
+        Get the directory name given a filepath.
+        """
+
+        if hasattr(filepath, '__call__') or os.path.isabs(filepath):
+            d = ''
+        else:
+            d = os.path.dirname(filepath)
+
+        return d
+        
+    def _generate_target_list(self, path):
+        """
+        Generate a target list given a path string.
+        """
+
+        path_list = path.split(os.sep)
+        path_list.reverse()
+        path_list.pop() # filename
+        target_list = []
+        i = 0
+        for s in pattern_list:
+            if is_glob_pattern(s):
+                target_list.append(path_list[i])
+                i += 1
+            else:
+                target_list.append(s)
+        target_list.reverse()
+
+        return target_list
+
     def add_data_files(self,*files):
         """Add data files to configuration data_files.
 
@@ -1270,33 +1324,25 @@ class Configuration(object):
         """
 
         if len(files)>1:
-            for f in files:
-                self.add_data_files(f)
+            self._add_files_list(files)
             return
         assert len(files)==1
-        if is_sequence(files[0]):
-            d, files = files[0]
-        else:
-            d = None
+
+        d, files = self._get_sequence(files)
+
         if is_string(files):
             filepat = files
         elif is_sequence(files):
             if len(files)==1:
                 filepat = files[0]
             else:
-                for f in files:
-                    self.add_data_files((d, f))
+                self._add_files_list(files, d)
                 return
         else:
             raise TypeError(repr(type(files)))
 
         if d is None:
-            if hasattr(filepat, '__call__'):
-                d = ''
-            elif os.path.isabs(filepat):
-                d = ''
-            else:
-                d = os.path.dirname(filepat)
+            d = self._get_directory_name(filepat)
             self.add_data_files((d, files))
             return
 
@@ -1306,18 +1352,7 @@ class Configuration(object):
                 pattern_list = d.split(os.sep)
                 pattern_list.reverse()
                 for path in paths:
-                    path_list = path.split(os.sep)
-                    path_list.reverse()
-                    path_list.pop() # filename
-                    target_list = []
-                    i = 0
-                    for s in pattern_list:
-                        if is_glob_pattern(s):
-                            target_list.append(path_list[i])
-                            i += 1
-                        else:
-                            target_list.append(s)
-                    target_list.reverse()
+                    target_list = self._generate_target_list(path)
                     self.add_data_files((os.sep.join(target_list), path))
             else:
                 self.add_data_files((d, paths))
