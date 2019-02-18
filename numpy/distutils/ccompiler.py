@@ -465,6 +465,32 @@ def CCompiler_show_customization(self):
 
 replace_method(CCompiler, 'show_customization', CCompiler_show_customization)
 
+def CCompiler_customize_set_compiler(self):
+    """
+    Set the correct C++ compiler based on the C compiler.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+    """
+    if hasattr(self, 'compiler') and 'cc' in self.compiler[0]:
+        if not self.compiler_cxx:
+            if self.compiler[0].startswith('gcc'):
+                a, b = 'gcc', 'g++'
+            else:
+                a, b = 'cc', 'c++'
+            self.compiler_cxx = [self.compiler[0].replace(a, b)]\
+                                + self.compiler[1:]
+    else:
+        if hasattr(self, 'compiler'):
+            log.warn("#### %s #######" % (self.compiler,))
+        if not hasattr(self, 'compiler_cxx'):
+            log.warn('Missing compiler_cxx fix for ' + self.__class__.__name__)
+
 def CCompiler_customize(self, dist, need_cxx=0):
     """
     Do any platform-specific customization of a compiler instance.
@@ -507,20 +533,7 @@ def CCompiler_customize(self, dist, need_cxx=0):
         except (AttributeError, ValueError):
             pass
 
-        if hasattr(self, 'compiler') and 'cc' in self.compiler[0]:
-            if not self.compiler_cxx:
-                if self.compiler[0].startswith('gcc'):
-                    a, b = 'gcc', 'g++'
-                else:
-                    a, b = 'cc', 'c++'
-                self.compiler_cxx = [self.compiler[0].replace(a, b)]\
-                                    + self.compiler[1:]
-        else:
-            if hasattr(self, 'compiler'):
-                log.warn("#### %s #######" % (self.compiler,))
-            if not hasattr(self, 'compiler_cxx'):
-                log.warn('Missing compiler_cxx fix for ' + self.__class__.__name__)
-
+        self.CCompiler_customize_set_compiler()
 
     # check if compiler supports gcc style automatic dependencies
     # run on every extension so skip for known good compilers
