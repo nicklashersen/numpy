@@ -231,3 +231,16 @@ class TestExecCommand(object):
                 s, o = exec_command.exec_command(command_string)
                 assert_(s == 0)
                 assert_(o == 'DD2480')
+
+    @pytest.mark.skipif(os.name != 'posix', reason="requires posix to run")
+    def test_command_sequence(self):
+        """
+        Test that the method can perform a sequence of commands.
+        """
+
+        with redirect_stdout(StringIO()):
+            with redirect_stderr(StringIO()):
+                command_sequence = ['echo', 'DD2480']
+                s, o = exec_command.exec_command(command_sequence)
+                assert_(s == 0)
+                assert_(o == 'DD2480')
