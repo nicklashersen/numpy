@@ -3,6 +3,7 @@ from __future__ import division, absolute_import, print_function
 import os
 import sys
 from tempfile import TemporaryFile
+from unittest.mock import patch
 
 from numpy.distutils import exec_command
 from numpy.distutils.exec_command import get_pythonexe
@@ -213,3 +214,13 @@ class TestExecCommand(object):
                     self.check_nt(use_tee=1)
                 self.check_execute_in(use_tee=0)
                 self.check_execute_in(use_tee=1)
+    
+    @patch('locale.getpreferredencoding')
+    def test_no_locale(self, mocked_method):
+        mocked_method.return_value = None
+        with redirect_stdout(StringIO()):
+            with redirect_stderr(StringIO()):
+                command_string = '"%s" -c "print(\'DD2480\')"' % self.pyexe
+                s, o = exec_command.exec_command(command_string)
+                assert_(s == 0)
+                assert_(o == 'DD2480')
