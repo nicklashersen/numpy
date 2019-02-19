@@ -3,10 +3,10 @@ from __future__ import division, absolute_import, print_function
 from os.path import join, sep, dirname
 
 from numpy.distutils.misc_util import (
-    appendpath, minrelpath, gpaths, get_shared_lib_extension, get_info
+    appendpath, minrelpath, gpaths, get_shared_lib_extension, get_info, Configuration
     )
 from numpy.testing import (
-    assert_, assert_equal
+    assert_, assert_equal, assert_raises
     )
 
 ajoin = lambda *paths: join(*((sep,)+paths))
@@ -82,3 +82,8 @@ def test_installed_npymath_ini():
 
     assert isinstance(info, dict)
     assert "define_macros" in info
+
+def test_add_data_files_TypeError():
+    c = Configuration()
+    with assert_raises(TypeError):
+         c.add_data_files(None)
