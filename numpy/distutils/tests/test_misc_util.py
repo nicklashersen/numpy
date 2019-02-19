@@ -96,11 +96,9 @@ def test_add_data_dir():
         datafiles = "something"
         data_files = []
 
-    #c = Configuration()
     c = mock()
     c.add_data_dir('fun')
     assert_equal([], c.data_files)
-
 
 def test_add_data_files():
     class mock(Configuration):
@@ -108,9 +106,8 @@ def test_add_data_files():
             return mockDist()
     class mockDist():
         datafiles = "something"
-        data_files = []
+        data_files = None
 
-    #c = Configuration()
     c = mock()
     c.add_data_files('fun')
-    assert_equal([], c.data_files)
+    assert_equal([('', [])], c.data_files)
