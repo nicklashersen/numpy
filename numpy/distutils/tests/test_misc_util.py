@@ -87,3 +87,30 @@ def test_add_data_files_TypeError():
     c = Configuration()
     with assert_raises(TypeError):
          c.add_data_files(None)
+
+def test_add_data_dir():
+    class mock(Configuration):
+        def get_distribution(self):
+            return mockDist()
+    class mockDist():
+        datafiles = "something"
+        data_files = []
+
+    #c = Configuration()
+    c = mock()
+    c.add_data_dir('fun')
+    assert_equal([], c.data_files)
+
+
+def test_add_data_files():
+    class mock(Configuration):
+        def get_distribution(self):
+            return mockDist()
+    class mockDist():
+        datafiles = "something"
+        data_files = []
+
+    #c = Configuration()
+    c = mock()
+    c.add_data_files('fun')
+    assert_equal([], c.data_files)
