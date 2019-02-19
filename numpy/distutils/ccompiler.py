@@ -491,6 +491,8 @@ def CCompiler_customize_set_compiler(self):
         if not hasattr(self, 'compiler_cxx'):
             log.warn('Missing compiler_cxx fix for ' + self.__class__.__name__)
 
+replace_method(CCompiler, 'customize_set_compiler', CCompiler_customize_set_compiler)
+
 def CCompiler_customize(self, dist, need_cxx=0):
     """
     Do any platform-specific customization of a compiler instance.
