@@ -97,6 +97,10 @@ complexity of the function.
 #### setup
 The setup function loads configuration and libraries for the distribution utilities. It copies specified attributes (given as argument) from various configurations into configurations in the dist utility core (distutils.core). The function has a high cyclomatic complexity because it 1) copies a lot of different types of data (which could be split into separate functions) and 2) copies data from various places and data structures. It also has a high cyclomatic complexity because it has a lot of if-statements for the various attributes given in the arguments.
 
+#### long\_double\_representation
+
+The function `long_double_representation` in `numpy/core/setup_common.py`, given a binary dump as given by GNU od -b, the fuction looks for long double corresponding representaion. Just like many of the other functions it consists of many nested if- and for-statements. The function itself is not too long (50 LOC) but consists of alot of different cases dependant on the imput size of lines giving it many branches and hence being moderately complex (CCN = 17).
+
 ## Coverage tool 
 
 
