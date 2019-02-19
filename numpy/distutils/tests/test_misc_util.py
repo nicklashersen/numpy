@@ -84,11 +84,14 @@ def test_installed_npymath_ini():
     assert "define_macros" in info
 
 def test_add_data_files_TypeError():
+    # ensures that if called a none value, add_data_files raises exception
     c = Configuration()
     with assert_raises(TypeError):
          c.add_data_files(None)
 
 def test_add_data_dir():
+    # mocks a config object with empty data_files
+    # ensures that no data is added and no exceptions are rasied
     class mock(Configuration):
         def get_distribution(self):
             return mockDist()
@@ -101,6 +104,8 @@ def test_add_data_dir():
     assert_equal([], c.data_files)
 
 def test_add_data_files():
+    # Mocking a config object with get_dist returns None
+    # ensures that no errors are raised and empty file is added
     class mock(Configuration):
         def get_distribution(self):
             return None
