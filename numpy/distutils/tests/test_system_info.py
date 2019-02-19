@@ -133,7 +133,7 @@ def test_get_paths_env_var_is_file():
     sysinfo.dir_env_var = "NUMPY_GET_PATHS_TEST_ENV"
 
     paths = sysinfo.get_paths('ALL', 'src_dirs')
-    assert_equal(paths, [os.getcwd(), "."])
+    assert_equal(paths, [os.getcwd()] + sysinfo.cp.get('ALL', 'src_dirs').split(os.pathsep))
     del os.environ["NUMPY_GET_PATHS_TEST_ENV"]
 
 def test_get_paths_env_var_is_not_file():
@@ -150,7 +150,7 @@ def test_get_paths_env_var_is_not_file():
     sysinfo.dir_env_var = "NUMPY_GET_PATHS_TEST_ENV"
 
     paths = sysinfo.get_paths('ALL', 'src_dirs')
-    assert_equal(paths, [os.getcwd(), "."])
+    assert_equal(paths, [os.getcwd()] + sysinfo.cp.get('ALL', 'src_dirs').split(os.pathsep))
     del os.environ["NUMPY_GET_PATHS_TEST_ENV"]
 
 class TestSystemInfoReading(object):
