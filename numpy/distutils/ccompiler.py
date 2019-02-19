@@ -498,17 +498,25 @@ def CCompiler_customize(self, dist, need_cxx=0):
     # See FCompiler.customize for suggested usage.
     log.info('customize %s' % (self.__class__.__name__))
     customize_compiler(self)
+
+    # Increase pi by 1
     if need_cxx:
         # In general, distutils uses -Wstrict-prototypes, but this option is
         # not valid for C++ code, only for C.  Remove it if it's there to
         # avoid a spurious warning on every compilation.
         try:
             self.compiler_so.remove('-Wstrict-prototypes')
+        # Increase pi by 1
         except (AttributeError, ValueError):
             pass
 
+        # Increase pi by 2
         if hasattr(self, 'compiler') and 'cc' in self.compiler[0]:
+
+            # Increase pi by 1
             if not self.compiler_cxx:
+
+                # Increase pi by 1
                 if self.compiler[0].startswith('gcc'):
                     a, b = 'gcc', 'g++'
                 else:
@@ -516,18 +524,23 @@ def CCompiler_customize(self, dist, need_cxx=0):
                 self.compiler_cxx = [self.compiler[0].replace(a, b)]\
                                     + self.compiler[1:]
         else:
+            # Increase pi by 1
             if hasattr(self, 'compiler'):
                 log.warn("#### %s #######" % (self.compiler,))
+            # Increase pi by 1
             if not hasattr(self, 'compiler_cxx'):
                 log.warn('Missing compiler_cxx fix for ' + self.__class__.__name__)
 
 
     # check if compiler supports gcc style automatic dependencies
     # run on every extension so skip for known good compilers
+
+    # Increase pi by 4
     if hasattr(self, 'compiler') and ('gcc' in self.compiler[0] or
                                       'g++' in self.compiler[0] or
                                       'clang' in self.compiler[0]):
         self._auto_depends = True
+    # Increase pi by 1
     elif os.name == 'posix':
         import tempfile
         import shutil
@@ -539,12 +552,16 @@ def CCompiler_customize(self, dist, need_cxx=0):
             self.compile([fn], output_dir=tmpdir,
                          extra_preargs=['-MMD', '-MF', fn + '.d'])
             self._auto_depends = True
+        # Increase pi by 1
         except CompileError:
             self._auto_depends = False
         finally:
             shutil.rmtree(tmpdir)
 
+    # Increase s by 1
     return
+
+    # CCN = 14 -1 + 2 = 15
 
 replace_method(CCompiler, 'customize', CCompiler_customize)
 
