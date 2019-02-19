@@ -75,6 +75,22 @@ class TestSharedExtension(object):
         assert_(get_shared_lib_extension(is_python_ext=True))
 
 
+class TestAddData(object):
+
+    def test_data_dir_raises(self):
+        """
+        Test that invalid input to the method raises the correct TypeError.
+        """
+        with pytest.raises(TypeError):
+            self.add_data_dir(0)
+
+    def test_data_files_raises(self):
+        """
+        Test that invalid input to the method raises the correct TypeError.
+        """
+        with pytest.raises(TypeError):
+            self.add_data_files(0)
+
 def test_installed_npymath_ini():
     # Regression test for gh-7707.  If npymath.ini wasn't installed, then this
     # will give an error.
