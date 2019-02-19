@@ -114,6 +114,10 @@ The function `add_data_file` in `numpy/distutils/misc_utils.py` adds data files 
 
 The function `finalize_options` in `numpy/distutils/command/build_src.py` is not documented but the file `build_src.py` is used for building swig and f2py sources. The `finalize_options` function seems to be setting build settings for building these sources. The function has a cyclomatic complexity number (CCN) of 17 and is moderately long but is mostly made up of if-statements. `lizard` gives the same cyclomatic complexity number (CCN) of 17. Since the function checks a lot of options to see if they are empty or not in order to either give that option the set value or a default value there are a lot of if-statements which explain the high CCN. There are no exceptions in the thrown function.
 
+#### long\_double\_representation
+
+The function `long_double_representation` in `numpy/core/setup_common.py`, given a binary dump as given by GNU od -b, the fuction looks for long double corresponding representaion. Just like many of the other functions it consists of many nested if- and for-statements. The function itself is not too long (50 LOC) but consists of alot of different cases dependant on the imput size of lines giving it many branches and hence being moderately complex (CCN = 17). 
+
 ## Part 2: Coverage measurement and improvement
 
 ### Part 2.1: DIY
