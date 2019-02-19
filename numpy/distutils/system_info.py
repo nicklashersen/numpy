@@ -660,7 +660,8 @@ class system_info(object):
 
         return copy.deepcopy(res)
 
-    def _get_paths_get_env(self):
+    def get_paths(self, section, key):
+        dirs = self.cp.get(section, key).split(os.pathsep)
         env_var = self.dir_env_var
         if env_var:
             if is_sequence(env_var):
@@ -672,26 +673,6 @@ class system_info(object):
                 if not env_var[0] == e0:
                     log.info('Setting %s=%s' % (env_var[0], e0))
                 env_var = e0
-
-        return env_var
-        
-    def _get_paths_dirs(self, dirs):
-        ret = []
-        
-        for d in dirs:
-            if len(d) > 0 and not os.path.isdir(d):
-                warnings.warn('Specified path %s is invalid.' % d, stacklevel=2)
-                continue
-
-            if d not in ret:
-                ret.append(d)
-
-        return ret
-
-    def get_paths(self, section, key):
-        dirs = self.cp.get(section, key).split(os.pathsep)
-        env_var = self._get_paths_get_env()
-
         if env_var and env_var in os.environ:
             d = os.environ[env_var]
             if d == 'None':
@@ -722,7 +703,14 @@ class system_info(object):
                 dirs = ds2 + dirs
         default_dirs = self.cp.get(self.section, key).split(os.pathsep)
         dirs.extend(default_dirs)
-        ret = self._get_paths_dirs(dirs)
+        ret = []
+        for d in dirs:
+            if len(d) > 0 and not os.path.isdir(d):
+                warnings.warn('Specified path %s is invalid.' % d, stacklevel=2)
+                continue
+
+            if d not in ret:
+                ret.append(d)
 
         log.debug('( %s = %s )', key, ':'.join(ret))
         return ret
