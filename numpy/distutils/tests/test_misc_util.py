@@ -103,10 +103,7 @@ def test_add_data_dir():
 def test_add_data_files():
     class mock(Configuration):
         def get_distribution(self):
-            return mockDist()
-    class mockDist():
-        datafiles = "something"
-        data_files = None
+            return None
 
     c = mock()
     c.add_data_files('fun')
