@@ -36,6 +36,9 @@ Tests can then be run after installation with:
 
 ## Branches we use for the assingment in the couse DD2480
 develop: Added unit tests
+
 mccn: Manual calculation of CCN as comments in the code
+
 doc: Report in report.md and DIY coverage tool
+
 refactoring: Refactored functions
