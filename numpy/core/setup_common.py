@@ -370,17 +370,21 @@ def long_double_representation(lines):
                 # "before" bytes. In other words the first 4 "before" bytes went
                 # past the sliding window.
                 if read[:12] == _BEFORE_SEQ[4:]:
-                    return _long_double_representation_case1(read)
+                    return_value = _long_double_representation_case1(read)
+                    if return_value:
+                        return return_value
 
                 # if the content was 16 bytes, we are left with 32-8-16 = 16
                 # "before" bytes, so 8 went past the sliding window.
                 elif read[:8] == _BEFORE_SEQ[8:]:
-                    return _long_double_representation_case2(read)
-
+                    return_value =  _long_double_representation_case2(read)
+                    if return_value:
+                        return return_value
                 # if the content was 8 bytes, left with 32-8-8 = 16 bytes
                 elif read[:16] == _BEFORE_SEQ:
-                    return _long_double_representation_case3(read)
-
+                    return_value =  _long_double_representation_case3(read)
+                    if return_value:
+                        return return_value
     if saw is not None:
         raise ValueError("Unrecognized format (%s)" % saw)
     else:
@@ -395,6 +399,7 @@ def _long_double_representation_case1(read):
         return 'INTEL_EXTENDED_12_BYTES_LE'
     if read[12:-8] == _MOTOROLA_EXTENDED_12B:
         return 'MOTOROLA_EXTENDED_12_BYTES_BE'
+    return None
 
 def _long_double_representation_case2(read):
     # if the content was 16 bytes, we are left with 32-8-16 = 16
@@ -409,6 +414,7 @@ def _long_double_representation_case2(read):
         return 'IBM_DOUBLE_DOUBLE_LE'
     elif read[8:-8] == _IBM_DOUBLE_DOUBLE_BE:
         return 'IBM_DOUBLE_DOUBLE_BE'
+    return None
 
 def _long_double_representation_case3(read):
     # if the content was 8 bytes, left with 32-8-8 = 16 bytes
@@ -416,3 +422,4 @@ def _long_double_representation_case3(read):
         return 'IEEE_DOUBLE_LE'
     elif read[16:-8] == _IEEE_DOUBLE_BE:
         return 'IEEE_DOUBLE_BE'
+    return None
