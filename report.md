@@ -86,6 +86,9 @@ The function `CCompiler_customize` customizes the compiler command depending on 
 #### get\_paths
 The function `get_paths` returns the current environment PATH for a given type (src, library, etc). We got a CCN of 19 and the reason for this is that there are a lot of if-statements and loops for different types of paths an concatenated paths (with :). The function is quite long since it is quite complex and includes a lot of different cases and logic for concatenating paths. There are no thrown exceptions in the function. There is no documentation for this particular function. Lizard reports a CCN of 20 which differs by 1 from our calculation.
 
+#### \_scalar\_str
+The function `_scalar_str` returns a string to describe the numpy dtype each branch result in a uniqe string. We calculated the CCN to 16 which is very reasonable for this function. The numpy library comes with more than 10 possible dtypes (bools, different sizes of floats and ints, etc) and there is support to define your own. There is no other reasonable way to implement this (without harming readability), however some of the cases can be broken down and separeted to reduce CCN. There is some documentation for this function, a few cases are. The function may raise runtimeError.
+
 ## Coverage tool 
 
 
