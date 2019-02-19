@@ -1305,50 +1305,50 @@ class Configuration(object):
         \\Python2.4 \\Lib \\site-packages \\mypackage \\mysubpackage').
         """
 
-        if len(files)>1:
-            for f in files:
+        if len(files)>1: # pi + 1 = 1
+            for f in files: # pi + 1 = 2
                 self.add_data_files(f)
-            return
+            return # s + 1 = 1
         assert len(files)==1
-        if is_sequence(files[0]):
+        if is_sequence(files[0]): # pi + 1 = 3
             d, files = files[0]
-        else:
+        else: 
             d = None
-        if is_string(files):
+        if is_string(files): # pi + 1 = 4
             filepat = files
-        elif is_sequence(files):
-            if len(files)==1:
+        elif is_sequence(files): # pi + 1 = 5
+            if len(files)==1: # pi + 1 = 6
                 filepat = files[0]
             else:
-                for f in files:
+                for f in files: # pi + 1 = 7
                     self.add_data_files((d, f))
-                return
+                return # s + 1 = 2
         else:
-            raise TypeError(repr(type(files)))
+            raise TypeError(repr(type(files))) # s + 1 = 3
 
-        if d is None:
-            if hasattr(filepat, '__call__'):
+        if d is None: # pi + 1 = 8
+            if hasattr(filepat, '__call__'): # pi + 1 = 9
                 d = ''
-            elif os.path.isabs(filepat):
+            elif os.path.isabs(filepat): # pi + 1 = 10
                 d = ''
             else:
                 d = os.path.dirname(filepat)
             self.add_data_files((d, files))
-            return
+            return # s + 1 = 4
 
         paths = self.paths(filepat, include_non_existing=False)
-        if is_glob_pattern(filepat):
-            if is_glob_pattern(d):
+        if is_glob_pattern(filepat): # pi + 1 = 11
+            if is_glob_pattern(d): # pi + 1 = 12
                 pattern_list = d.split(os.sep)
                 pattern_list.reverse()
-                for path in paths:
+                for path in paths: # pi + 1 = 13
                     path_list = path.split(os.sep)
                     path_list.reverse()
                     path_list.pop() # filename
                     target_list = []
                     i = 0
-                    for s in pattern_list:
-                        if is_glob_pattern(s):
+                    for s in pattern_list: # pi + 1 = 14
+                        if is_glob_pattern(s): # pi + 1 = 15
                             target_list.append(path_list[i])
                             i += 1
                         else:
@@ -1357,16 +1357,20 @@ class Configuration(object):
                     self.add_data_files((os.sep.join(target_list), path))
             else:
                 self.add_data_files((d, paths))
-            return
+            return # s + 1 = 4
         assert not is_glob_pattern(d), repr((d, filepat))
 
         dist = self.get_distribution()
-        if dist is not None and dist.data_files is not None:
+        if dist is not None and dist.data_files is not None: # pi + 2 = 17
             data_files = dist.data_files
         else:
             data_files = self.data_files
 
         data_files.append((os.path.join(self.path_in_package, d), paths))
+        # s + 1 = 5 (implicit return)
+        # pi = 17
+        # CCN = pi - s + 2 = 14
+
 
     ### XXX Implement add_py_modules
 
