@@ -8,7 +8,7 @@ from numpy.distutils import ccompiler
 from distutils.unixccompiler import UnixCCompiler
 
 class MockCompiler(UnixCCompiler):
-    """Mock class for the CCompiler for testing""""
+    """Mock class for the CCompiler for testing"""
     compiler_type = 'intel'
     cc_exe = 'icc'
     cc_args = 'fPIC'
