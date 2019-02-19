@@ -88,13 +88,15 @@ class build_src(build_ext.build_ext):
                                    ('build_base', 'build_base'),
                                    ('build_lib', 'build_lib'),
                                    ('force', 'force'))
+        # Increase pi with 1
         if self.package is None:
             self.package = self.distribution.ext_package
         self.extensions = self.distribution.ext_modules
-        self.libraries = self.distribution.libraries or []
-        self.py_modules = self.distribution.py_modules or []
-        self.data_files = self.distribution.data_files or []
+        self.libraries = self.distribution.libraries or [] # Increase pi with 1
+        self.py_modules = self.distribution.py_modules or [] # Increase pi with 1
+        self.data_files = self.distribution.data_files or [] # Increase pi with 1
 
+        # Increase pi with 1
         if self.build_src is None:
             plat_specifier = ".%s-%s" % (get_platform(), sys.version[0:3])
             self.build_src = os.path.join(self.build_base, 'src'+plat_specifier)
@@ -102,24 +104,30 @@ class build_src(build_ext.build_ext):
         # py_modules_dict is used in build_py.find_package_modules
         self.py_modules_dict = {}
 
+        # Increase pi with 1
         if self.f2pyflags:
+            # Increase pi with 1
             if self.f2py_opts:
                 log.warn('ignoring --f2pyflags as --f2py-opts already used')
             else:
                 self.f2py_opts = self.f2pyflags
             self.f2pyflags = None
+        # Increase pi with 1
         if self.f2py_opts is None:
             self.f2py_opts = []
         else:
             self.f2py_opts = shlex.split(self.f2py_opts)
 
+        # Increase pi with 1
         if self.swigflags:
+            # Increase pi with 1
             if self.swig_opts:
                 log.warn('ignoring --swigflags as --swig-opts already used')
             else:
                 self.swig_opts = self.swigflags
             self.swigflags = None
 
+        # Increase pi with 1
         if self.swig_opts is None:
             self.swig_opts = []
         else:
@@ -127,19 +135,26 @@ class build_src(build_ext.build_ext):
 
         # use options from build_ext command
         build_ext = self.get_finalized_command('build_ext')
+        # Increase pi with 1
         if self.inplace is None:
             self.inplace = build_ext.inplace
+        # Increase pi with 1
         if self.swig_cpp is None:
             self.swig_cpp = build_ext.swig_cpp
+        # Increase pi with 1
         for c in ['swig', 'swig_opt']:
             o = '--'+c.replace('_', '-')
             v = getattr(build_ext, c, None)
+            # Increase pi with 1
             if v:
+                # Increase pi with 1
                 if getattr(self, c):
                     log.warn('both build_src and build_ext define %s option' % (o))
                 else:
                     log.info('using "%s=%s" option from build_ext command' % (o, v))
                     setattr(self, c, v)
+        # Increase s with 1 for implicit return
+        # CCN = 16 - 1 + 2= 17
 
     def run(self):
         log.info("build_src")
