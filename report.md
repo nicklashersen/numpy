@@ -82,7 +82,6 @@ Report of new coverage: [link]
 
 Test cases added:
 
-
 ```
 test_setup_type_error
 test_get_paths_env_var_is_file
@@ -103,12 +102,12 @@ test_setup_dist_help
 test_setup_ext_library_string
 ```
 
-
 ## Refactoring
 
 
 Functions refactored:
 
+```
 add_data_files
 add_data_dir
 finalize_options
@@ -121,7 +120,7 @@ _scalar_str
 long_double_representaion
 analyzeline
 analyzevars
-
+```
 
 ## Effort spent
 
