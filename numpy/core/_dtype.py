@@ -116,10 +116,7 @@ def _scalar_str(dtype, short):
     byteorder = _byte_order_str(dtype)
 
     if dtype.type == np.bool_:
-        if short:
-            return "'?'"
-        else:
-            return "'bool'"
+        return _scalar_str_bool(short)
 
     elif dtype.type == np.object_:
         # The object reference may be different sizes on different
@@ -127,24 +124,15 @@ def _scalar_str(dtype, short):
         return "'O'"
 
     elif dtype.type == np.string_:
-        if _isunsized(dtype):
-            return "'S'"
-        else:
-            return "'S%d'" % dtype.itemsize
+        return _scalar_str_np_string(dtype)
 
     elif dtype.type == np.unicode_:
-        if _isunsized(dtype):
-            return "'%sU'" % byteorder
-        else:
-            return "'%sU%d'" % (byteorder, dtype.itemsize / 4)
+        return _scalar_str_np_unicode(dtype, byteorder)
 
     # unlike the other types, subclasses of void are preserved - but
     # historically the repr does not actually reveal the subclass
     elif issubclass(dtype.type, np.void):
-        if _isunsized(dtype):
-            return "'V'"
-        else:
-            return "'V%d'" % dtype.itemsize
+        return _scalar_str_np_sub_dtype_type(dtype)
 
     elif dtype.type == np.datetime64:
         return "'%sM8%s'" % (byteorder, _datetime_metadata_str(dtype))
@@ -153,13 +141,7 @@ def _scalar_str(dtype, short):
         return "'%sm8%s'" % (byteorder, _datetime_metadata_str(dtype))
 
     elif np.issubdtype(dtype, np.number):
-        # Short repr with endianness, like '<f8'
-        if short or dtype.byteorder not in ('=', '|'):
-            return "'%s%c%d'" % (byteorder, dtype.kind, dtype.itemsize)
-
-        # Longer repr, like 'float64'
-        else:
-            return "'%s%d'" % (_kind_name(dtype), 8*dtype.itemsize)
+        return _scalar_str_np_sub_dtype_(dtype, short, byteorder)
 
     elif dtype.isbuiltin == 2:
         return dtype.type.__name__
@@ -167,6 +149,39 @@ def _scalar_str(dtype, short):
     else:
         raise RuntimeError(
             "Internal error: NumPy dtype unrecognized type number")
+
+def _scalar_str_bool(short):
+    if short:
+        return "'?'"
+    else:
+        return "'bool'"
+
+def _scalar_str_np_string(dtype):
+    if _isunsized(dtype):
+        return "'S'"
+    else:
+        return "'S%d'" % dtype.itemsize
+
+def _scalar_str_np_unicode(dtype, byteorder):
+    if _isunsized(dtype):
+        return "'%sU'" % byteorder
+    else:
+        return "'%sU%d'" % (byteorder, dtype.itemsize / 4)
+
+def _scalar_str_np_sub_dtype_type(dtype):
+    if _isunsized(dtype):
+        return "'V'"
+    else:
+        return "'V%d'" % dtype.itemsize
+
+def _scalar_str_np_sub_dtype_(dtype, short, byteorder):
+    # Short repr with endianness, like '<f8'
+    if short or dtype.byteorder not in ('=', '|'):
+        return "'%s%c%d'" % (byteorder, dtype.kind, dtype.itemsize)
+
+    # Longer repr, like 'float64'
+    else:
+        return "'%s%d'" % (_kind_name(dtype), 8*dtype.itemsize)
 
 
 def _byte_order_str(dtype):
