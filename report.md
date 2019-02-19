@@ -94,6 +94,9 @@ are directly dependant on the method in which the version information is found. 
 since the different methods of finding the ATLAS version easily may be split up into smaller units, thus resulting in a lower
 complexity of the function.
 
+#### setup
+The setup function loads configuration and libraries for the distribution utilities. It copies specified attributes (given as argument) from various configurations into configurations in the dist utility core (distutils.core). The function has a high cyclomatic complexity because it 1) copies a lot of different types of data (which could be split into separate functions) and 2) copies data from various places and data structures. It also has a high cyclomatic complexity because it has a lot of if-statements for the various attributes given in the arguments.
+
 ## Coverage tool 
 
 
@@ -120,10 +123,10 @@ Patch: git diff 6c2ee88529265f0e002c9504973fe7679fef4c0a
 ### Evaluation
 
 
-Report of old coverage: [link]
+[Report of old coverage](./doc_resources/master_html/index.html)
 
 
-Report of new coverage: [link]
+[Report of new coverage](./doc_resources/develop_html/index.html)
 
 
 Test cases added:
