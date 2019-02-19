@@ -86,6 +86,14 @@ The function `CCompiler_customize` customizes the compiler command depending on 
 #### get\_paths
 The function `get_paths` returns the current environment PATH for a given type (src, library, etc). We got a CCN of 19 and the reason for this is that there are a lot of if-statements and loops for different types of paths an concatenated paths (with :). The function is quite long since it is quite complex and includes a lot of different cases and logic for concatenating paths. There are no thrown exceptions in the function. There is no documentation for this particular function. Lizard reports a CCN of 20 which differs by 1 from our calculation.
 
+#### get\_atlas\_version
+The function `get_atlas_version` is a function that scans the environment in an attempt to find the installed ATLAS version on
+the system. It does this by looking for artifacts such as files, folders or environment variables from an installed ATLAS 
+version. Since there are many different artifacts to look/scan for, the function has become quite complex. The branch outcomes
+are directly dependant on the method in which the version information is found. The resulted complexity is however not needed
+since the different methods of finding the ATLAS version easily may be split up into smaller units, thus resulting in a lower
+complexity of the function.
+
 #### setup
 The setup function loads configuration and libraries for the distribution utilities. It copies specified attributes (given as argument) from various configurations into configurations in the dist utility core (distutils.core). The function has a high cyclomatic complexity because it 1) copies a lot of different types of data (which could be split into separate functions) and 2) copies data from various places and data structures. It also has a high cyclomatic complexity because it has a lot of if-statements for the various attributes given in the arguments.
 
