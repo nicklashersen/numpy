@@ -5,11 +5,10 @@ from os.path import join, sep, dirname
 import pytest
 
 from numpy.distutils.misc_util import (
-    appendpath, minrelpath, gpaths, get_shared_lib_extension, get_info,
-    Configuration
+    appendpath, minrelpath, gpaths, get_shared_lib_extension, get_info, Configuration
     )
 from numpy.testing import (
-    assert_, assert_equal
+    assert_, assert_equal, assert_raises
     )
 
 ajoin = lambda *paths: join(*((sep,)+paths))
@@ -104,9 +103,46 @@ class TestAddData(object):
         assert_(str(exepinfo.value) == expected_return)
 
 def test_installed_npymath_ini():
-    # Regression test for gh-7707.  If npymath.ini wasn't installed, then this
-    # will give an error.
+    """
+    Regression test for gh-7707.  If npymath.ini wasn't installed, then this
+    will give an error.
+    """
     info = get_info('npymath')
 
     assert isinstance(info, dict)
     assert "define_macros" in info
+
+def test_add_data_files_TypeError():
+    # ensures that if called a none value, add_data_files raises exception
+    c = Configuration()
+    with assert_raises(TypeError):
+         c.add_data_files(None)
+
+def test_add_data_dir():
+    """
+    Mocks a config object with empty data_files
+    ensures that no data is added and no exceptions are rasied
+    """
+    class mock(Configuration):
+        def get_distribution(self):
+            return mockDist()
+    class mockDist():
+        datafiles = "something"
+        data_files = []
+
+    c = mock()
+    c.add_data_dir('fun')
+    assert_equal([], c.data_files)
+
+def test_add_data_files():
+    """
+    Mocking a config object with get_dist returns None
+    ensures that no errors are raised and empty file is added
+    """
+    class mock(Configuration):
+        def get_distribution(self):
+            return None
+
+    c = mock()
+    c.add_data_files('fun')
+    assert_equal([('', [])], c.data_files)
