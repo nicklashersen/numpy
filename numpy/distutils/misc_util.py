@@ -1357,7 +1357,7 @@ class Configuration(object):
                     self.add_data_files((os.sep.join(target_list), path))
             else:
                 self.add_data_files((d, paths))
-            return # s + 1 = 4
+            return # s + 1 = 5
         assert not is_glob_pattern(d), repr((d, filepat))
 
         dist = self.get_distribution()
@@ -1367,9 +1367,9 @@ class Configuration(object):
             data_files = self.data_files
 
         data_files.append((os.path.join(self.path_in_package, d), paths))
-        # s + 1 = 5 (implicit return)
+        # s + 1 = 6 (implicit return)
         # pi = 17
-        # CCN = pi - s + 2 = 14
+        # CCN = pi - s + 2 = 13
 
 
     ### XXX Implement add_py_modules
