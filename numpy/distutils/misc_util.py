@@ -1051,67 +1051,6 @@ class Configuration(object):
             self.warn('distutils distribution has been initialized,'\
                       ' it may be too late to add a subpackage '+ subpackage_name)
 
-    def _generate_dir_target_list(self, data_path, pattern_list, d, path):
-        """
-        Given a directory and a path, generate a target list.
-        """
-
-        rpath = rel_path(path, self.local_path)
-        path_list = rpath.split(os.sep)
-        path_list.reverse()
-        target_list = []
-        i = 0
-        for s in pattern_list:
-            if is_glob_pattern(s):
-                if i>=len(path_list):
-                    raise ValueError('cannot fill pattern %r with %r' \
-                            % (d, path))
-                target_list.append(path_list[i])
-            else:
-                assert s==path_list[i], repr((s, path_list[i], data_path, d, path, rpath))
-                target_list.append(s)
-            i += 1
-        if path_list[i:]:
-            self.warn('mismatch of pattern_list=%s and path_list=%s'\
-                        % (pattern_list, path_list))
-        target_list.reverse()
-
-        return target_list
-    
-    def _generate_dir_pattern_list(self, d):
-        """
-        Generate a pattern list given a directory.
-        """
-
-        pattern_list = allpath(d).split(os.sep)
-        pattern_list.reverse()
-        # /a/*//b/ -> /a/*/b
-        rl = list(range(len(pattern_list)-1)); rl.reverse()
-        for i in rl:
-            if not pattern_list[i]:
-                del pattern_list[i]
-        
-        return pattern_list
-
-    def _get_dir_sequence(self, data_path):
-        """
-        Checks if the data_path is a sequence and returns the directory and data_path.
-        """
-
-        d = None
-        if is_sequence(data_path):
-            d, data_path = data_path
-
-        return d, data_path
-    
-    def _add_paths_list(self, d, paths):
-        """
-        Add a list of paths to a directory.
-        """
-
-        for path in paths:
-            self.add_data_dir((d, path))
-
     def add_data_dir(self, data_path):
         """Recursively add files under data_path to data_files list.
 
@@ -1168,9 +1107,10 @@ class Configuration(object):
                 car.dat
 
         """
-
-        d, data_path = self._get_dir_sequence(data_path)
-
+        if is_sequence(data_path):
+            d, data_path = data_path
+        else:
+            d = None
         if is_sequence(data_path):
             [self.add_data_dir((d, p)) for p in data_path]
             return
@@ -1183,18 +1123,41 @@ class Configuration(object):
         paths = self.paths(data_path, include_non_existing=False)
         if is_glob_pattern(data_path):
             if is_glob_pattern(d):
-                pattern_list = self._generate_dir_pattern_list(d)
+                pattern_list = allpath(d).split(os.sep)
+                pattern_list.reverse()
+                # /a/*//b/ -> /a/*/b
+                rl = list(range(len(pattern_list)-1)); rl.reverse()
+                for i in rl:
+                    if not pattern_list[i]:
+                        del pattern_list[i]
+                #
                 for path in paths:
                     if not os.path.isdir(path):
                         print('Not a directory, skipping', path)
                         continue
-                    target_list = self._generate_dir_target_list(data_path,
-                                                                 pattern_list,
-                                                                 d,
-                                                                 path)
+                    rpath = rel_path(path, self.local_path)
+                    path_list = rpath.split(os.sep)
+                    path_list.reverse()
+                    target_list = []
+                    i = 0
+                    for s in pattern_list:
+                        if is_glob_pattern(s):
+                            if i>=len(path_list):
+                                raise ValueError('cannot fill pattern %r with %r' \
+                                      % (d, path))
+                            target_list.append(path_list[i])
+                        else:
+                            assert s==path_list[i], repr((s, path_list[i], data_path, d, path, rpath))
+                            target_list.append(s)
+                        i += 1
+                    if path_list[i:]:
+                        self.warn('mismatch of pattern_list=%s and path_list=%s'\
+                                  % (pattern_list, path_list))
+                    target_list.reverse()
                     self.add_data_dir((os.sep.join(target_list), path))
             else:
-                self._add_paths_list(d, paths)
+                for path in paths:
+                    self.add_data_dir((d, path))
             return
         assert not is_glob_pattern(d), repr(d)
 
@@ -1217,60 +1180,6 @@ class Configuration(object):
             for f in files:
                 data_dict[p].add(f)
         self.data_files[:] = [(p, list(files)) for p, files in data_dict.items()]
-
-    def _add_files_list(self, files, d=None):
-        """
-        Add a list of files with an optional directory
-        """
-
-        for f in files:
-            if d is not None:
-                self.add_data_files((d, f))
-            else:
-                self.add_data_files(f)
-
-    def _get_sequence(self, files):
-        """
-        Checks if the files are a sequence and returns the directory and files.
-        """
-
-        d = None
-        if is_sequence(files[0]):
-            d, files = files[0]
-
-        return d, files
-
-    def _get_directory_name(self, filepath):
-        """
-        Get the directory name given a filepath.
-        """
-
-        if hasattr(filepath, '__call__') or os.path.isabs(filepath):
-            d = ''
-        else:
-            d = os.path.dirname(filepath)
-
-        return d
-        
-    def _generate_target_list(self, path):
-        """
-        Generate a target list given a path string.
-        """
-
-        path_list = path.split(os.sep)
-        path_list.reverse()
-        path_list.pop() # filename
-        target_list = []
-        i = 0
-        for s in pattern_list:
-            if is_glob_pattern(s):
-                target_list.append(path_list[i])
-                i += 1
-            else:
-                target_list.append(s)
-        target_list.reverse()
-
-        return target_list
 
     def add_data_files(self,*files):
         """Add data files to configuration data_files.
@@ -1361,25 +1270,33 @@ class Configuration(object):
         """
 
         if len(files)>1:
-            self._add_files_list(files)
+            for f in files:
+                self.add_data_files(f)
             return
         assert len(files)==1
-
-        d, files = self._get_sequence(files)
-
+        if is_sequence(files[0]):
+            d, files = files[0]
+        else:
+            d = None
         if is_string(files):
             filepat = files
         elif is_sequence(files):
             if len(files)==1:
                 filepat = files[0]
             else:
-                self._add_files_list(files, d)
+                for f in files:
+                    self.add_data_files((d, f))
                 return
         else:
             raise TypeError(repr(type(files)))
 
         if d is None:
-            d = self._get_directory_name(filepat)
+            if hasattr(filepat, '__call__'):
+                d = ''
+            elif os.path.isabs(filepat):
+                d = ''
+            else:
+                d = os.path.dirname(filepat)
             self.add_data_files((d, files))
             return
 
@@ -1389,7 +1306,18 @@ class Configuration(object):
                 pattern_list = d.split(os.sep)
                 pattern_list.reverse()
                 for path in paths:
-                    target_list = self._generate_target_list(path)
+                    path_list = path.split(os.sep)
+                    path_list.reverse()
+                    path_list.pop() # filename
+                    target_list = []
+                    i = 0
+                    for s in pattern_list:
+                        if is_glob_pattern(s):
+                            target_list.append(path_list[i])
+                            i += 1
+                        else:
+                            target_list.append(s)
+                    target_list.reverse()
                     self.add_data_files((os.sep.join(target_list), path))
             else:
                 self.add_data_files((d, paths))

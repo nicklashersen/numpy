@@ -2,6 +2,8 @@ from __future__ import division, absolute_import, print_function
 
 from os.path import join, sep, dirname
 
+import pytest
+
 from numpy.distutils.misc_util import (
     appendpath, minrelpath, gpaths, get_shared_lib_extension, get_info, Configuration
     )
@@ -75,9 +77,36 @@ class TestSharedExtension(object):
         assert_(get_shared_lib_extension(is_python_ext=True))
 
 
+class TestAddData(object):
+
+    def test_data_dir_raises(self):
+        """
+        Test that invalid input to the method raises the correct TypeError.
+        """
+
+        config = Configuration()
+        with pytest.raises(TypeError) as exepinfo:
+            config.add_data_dir(0)
+
+        assert_(str(exepinfo.value) == 'not a string: 0')
+
+    def test_data_files_raises(self):
+        """
+        Test that invalid input to the method raises the correct TypeError.
+        """
+
+        config = Configuration()
+        with pytest.raises(TypeError) as exepinfo:
+            config.add_data_files(0)
+        expected_return = 'expected str, bytes or os.PathLike object, not int'
+
+        assert_(str(exepinfo.value) == expected_return)
+
 def test_installed_npymath_ini():
-    # Regression test for gh-7707.  If npymath.ini wasn't installed, then this
-    # will give an error.
+    """
+    Regression test for gh-7707.  If npymath.ini wasn't installed, then this
+    will give an error.
+    """
     info = get_info('npymath')
 
     assert isinstance(info, dict)
@@ -90,8 +119,10 @@ def test_add_data_files_TypeError():
          c.add_data_files(None)
 
 def test_add_data_dir():
-    # mocks a config object with empty data_files
-    # ensures that no data is added and no exceptions are rasied
+    """
+    Mocks a config object with empty data_files
+    ensures that no data is added and no exceptions are rasied
+    """
     class mock(Configuration):
         def get_distribution(self):
             return mockDist()
@@ -104,8 +135,10 @@ def test_add_data_dir():
     assert_equal([], c.data_files)
 
 def test_add_data_files():
-    # Mocking a config object with get_dist returns None
-    # ensures that no errors are raised and empty file is added
+    """
+    Mocking a config object with get_dist returns None
+    ensures that no errors are raised and empty file is added
+    """
     class mock(Configuration):
         def get_distribution(self):
             return None
