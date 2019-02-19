@@ -446,3 +446,23 @@ build/testenv/lib64/python3.6/site-packages/numpy/tests/__init__.py             
 ----------------------------------------------------------------------------------------------------------------------------------------
 TOTAL                                                                                        83641  14264  21568   1541    79%
 ```
+
+### Part 2.3: Refactoring to improve CCN
+
+You identified functions/methods with high complexity earlier on.  
+
+**Is this complexity really necessary?**  
+In most cases the complexity is unnecessary.
+This because it may be written in such a way that the functionality stays identical but the CCN is reduced.
+Reducing high CCN will most likely also make the code more readably and easier to understand.
+
+**Is it possible to split up the code into smaller units to reduce complexity?**  
+Yes. Functions with high CCN usually has sections of the code which might be regarded as a unit in it self.
+Splitting this code to smaller units/functions will reduce the CCN of the original functions and also reduce
+the overall average CCN.
+
+***If so, how would you go about this?**  
+Mapping the branches of the code is a powerful tool for identifying units of the code that may be split up.
+A more manual approach would be to go through the code and try and identify code repetition and parts of the
+code that could be made into more generic helper classes/functions. Looking at larger if/else statements is
+also a valid plan for finding units that may be split up.
