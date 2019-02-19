@@ -33,3 +33,9 @@ Tests can then be run after installation with:
     python -c 'import numpy; numpy.test()'
 
 [![Powered by NumFOCUS](https://img.shields.io/badge/powered%20by-NumFOCUS-orange.svg?style=flat&colorA=E1523D&colorB=007D8A)](https://numfocus.org)
+
+## Branches we use for the assingment in the couse DD2480
+develop: Added unit tests
+mccn: Manual calculation of CCN as comments in the code
+doc: Report in report.md and DIY coverage tool
+refactoring: Refactored functions
