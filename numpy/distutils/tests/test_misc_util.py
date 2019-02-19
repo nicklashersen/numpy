@@ -2,8 +2,11 @@ from __future__ import division, absolute_import, print_function
 
 from os.path import join, sep, dirname
 
+import pytest
+
 from numpy.distutils.misc_util import (
-    appendpath, minrelpath, gpaths, get_shared_lib_extension, get_info
+    appendpath, minrelpath, gpaths, get_shared_lib_extension, get_info,
+    Configuration
     )
 from numpy.testing import (
     assert_, assert_equal
@@ -74,6 +77,31 @@ class TestSharedExtension(object):
         # just check for no crash
         assert_(get_shared_lib_extension(is_python_ext=True))
 
+
+class TestAddData(object):
+
+    def test_data_dir_raises(self):
+        """
+        Test that invalid input to the method raises the correct TypeError.
+        """
+
+        config = Configuration()
+        with pytest.raises(TypeError) as exepinfo:
+            config.add_data_dir(0)
+
+        assert_(str(exepinfo.value) == 'not a string: 0')
+
+    def test_data_files_raises(self):
+        """
+        Test that invalid input to the method raises the correct TypeError.
+        """
+
+        config = Configuration()
+        with pytest.raises(TypeError) as exepinfo:
+            config.add_data_files(0)
+        expected_return = 'expected str, bytes or os.PathLike object, not int'
+
+        assert_(str(exepinfo.value) == expected_return)
 
 def test_installed_npymath_ini():
     # Regression test for gh-7707.  If npymath.ini wasn't installed, then this
