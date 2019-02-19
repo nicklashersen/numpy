@@ -5,8 +5,11 @@ import operator
 import pytest
 import ctypes
 import gc
+from unittest.mock import patch, MagicMock
+import pytest
 
 import numpy as np
+from numpy.core._dtype import _scalar_str 
 from numpy.core._rational_tests import rational
 from numpy.testing import (
     assert_, assert_equal, assert_array_equal, assert_raises, HAS_REFCOUNT)
@@ -1120,3 +1123,23 @@ class TestFromCTypes(object):
         self.check(ctypes.c_uint16.__ctype_be__, np.dtype('>u2'))
         self.check(ctypes.c_uint8.__ctype_le__, np.dtype('u1'))
         self.check(ctypes.c_uint8.__ctype_be__, np.dtype('u1'))
+
+class TestScalarString(object):
+
+    @patch('numpy.issubdtype')
+    def test_scalar_string_raises(self, mocked_method):
+        """
+        Test that the method raises the correct RuntimeError.
+        """
+
+        mocked_method.return_value = False
+
+        dtype = MagicMock()
+        dtype.byteorder = '|'
+        dtype.type = type(1)
+
+        with pytest.raises(RuntimeError) as exepinfo:
+            _scalar_str(dtype, None)
+        expected_return = 'Internal error: NumPy dtype unrecognized type number'
+
+        assert_(str(exepinfo.value) == expected_return)
