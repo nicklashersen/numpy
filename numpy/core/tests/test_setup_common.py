@@ -17,7 +17,7 @@ class TestSetupCommon(object):
 
         assert_(str(excinfo.value) == 'Could not lock sequences (None)')
 
-def test_long_double_representation_intel_extended_12b(self):
+    def test_long_double_representation_intel_extended_12b(self):
         """
         Test that a valid INTEL_EXTENDED_12B input gives the correct return.
         """
