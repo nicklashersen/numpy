@@ -1462,6 +1462,9 @@ int main(void) {
 _cached_atlas_version = {}
 
 
+def get_cached_atlas_version():
+    return _cached_atlas_version
+
 def get_atlas_version(**config):
     libraries = config.get('libraries', [])
     library_dirs = config.get('library_dirs', [])

@@ -11,6 +11,7 @@ from numpy.distutils import ccompiler, customized_ccompiler
 from numpy.testing import assert_, assert_equal
 from numpy.distutils.system_info import system_info, ConfigParser
 from numpy.distutils.system_info import default_lib_dirs, default_include_dirs
+from numpy.distutils.system_info import get_atlas_version, get_cached_atlas_version
 
 
 def get_class(name, notfound_action=1):
@@ -143,7 +144,7 @@ def test_get_paths_env_var_is_not_file():
         The current working directory should be returned and "." should be returned.
         An additional path to the current working directory is added to ensure
         that get_paths() does not return duplicates.
-        """
+    """
 
     os.environ["NUMPY_GET_PATHS_TEST_ENV"] = os.getcwd() + ":" + os.getcwd()
     sysinfo = system_info()
@@ -267,3 +268,19 @@ class TestSystemInfoReading(object):
             assert_(os.path.isfile(self._src2.replace('.c', '.o')))
         finally:
             os.chdir(previousDir)
+
+def test_get_atlas_version():
+    """
+    Ensure that a cached entry is returned from get_atlas_version
+    if _cached_atlas_version contains the key created in get_atlas_version.
+    """
+    cache = get_cached_atlas_version()
+    libs = [ 'lib' ]
+    dirs = [ 'dir' ]
+    attr = { 'libraries': libs, 'library_dirs': dirs }
+    cache_key = (tuple(libs), tuple(dirs))
+
+    cache[cache_key] = True
+
+    assert get_atlas_version(**attr) == True
+    assert len(cache) == 1
