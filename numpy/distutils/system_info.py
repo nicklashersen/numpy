@@ -663,29 +663,40 @@ class system_info(object):
     def get_paths(self, section, key):
         dirs = self.cp.get(section, key).split(os.pathsep)
         env_var = self.dir_env_var
+        # Increases pi by 1
         if env_var:
+            # Increases pi by 1
             if is_sequence(env_var):
                 e0 = env_var[-1]
+                # Increases pi by 1
                 for e in env_var:
+                    # Increases pi by 1
                     if e in os.environ:
                         e0 = e
                         break
+                # Increases pi by 1
                 if not env_var[0] == e0:
                     log.info('Setting %s=%s' % (env_var[0], e0))
                 env_var = e0
+        # Increases pi by 2
         if env_var and env_var in os.environ:
             d = os.environ[env_var]
+            # Increases pi by 1
             if d == 'None':
                 log.info('Disabled %s: %s',
                          self.__class__.__name__, '(%s is None)'
                          % (env_var,))
+                # Increases s by 1
                 return []
+            # Increases pi by 1
             if os.path.isfile(d):
                 dirs = [os.path.dirname(d)] + dirs
                 l = getattr(self, '_lib_names', [])
+                # Increases pi by 1
                 if len(l) == 1:
                     b = os.path.basename(d)
                     b = os.path.splitext(b)[0]
+                    # Increases pi by 1
                     if b[:3] == 'lib':
                         log.info('Replacing _lib_names[0]==%r with %r' \
                               % (self._lib_names[0], b[3:]))
@@ -693,27 +704,36 @@ class system_info(object):
             else:
                 ds = d.split(os.pathsep)
                 ds2 = []
+                # Increases pi by 1
                 for d in ds:
+                    # Increases pi by 1
                     if os.path.isdir(d):
                         ds2.append(d)
+                        # Increases pi by 1
                         for dd in ['include', 'lib']:
                             d1 = os.path.join(d, dd)
+                            # Increases pi by 1
                             if os.path.isdir(d1):
                                 ds2.append(d1)
                 dirs = ds2 + dirs
         default_dirs = self.cp.get(self.section, key).split(os.pathsep)
         dirs.extend(default_dirs)
         ret = []
+        # Increases pi by 1
         for d in dirs:
+            # Increases pi by 2
             if len(d) > 0 and not os.path.isdir(d):
                 warnings.warn('Specified path %s is invalid.' % d, stacklevel=2)
                 continue
 
+            # Increases pi by 1
             if d not in ret:
                 ret.append(d)
 
         log.debug('( %s = %s )', key, ':'.join(ret))
+        # Increases s by 1
         return ret
+        ## CCN = 19 - 2 + 2 = 19
 
     def get_lib_dirs(self, key='library_dirs'):
         return self.get_paths(self.section, key)
