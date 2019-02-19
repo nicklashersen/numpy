@@ -112,10 +112,10 @@ Patch: git diff 6c2ee88529265f0e002c9504973fe7679fef4c0a
 ### Evaluation
 
 
-Report of old coverage: [link]
+[Report of old coverage](./doc_resources/master_html/index.html)
 
 
-Report of new coverage: [link]
+[Report of new coverage](./doc_resources/develop_html/index.html)
 
 
 Test cases added:
