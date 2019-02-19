@@ -370,32 +370,56 @@ def long_double_representation(lines):
                 # "before" bytes. In other words the first 4 "before" bytes went
                 # past the sliding window.
                 if read[:12] == _BEFORE_SEQ[4:]:
-                    if read[12:-8] == _INTEL_EXTENDED_12B:
-                        return 'INTEL_EXTENDED_12_BYTES_LE'
-                    if read[12:-8] == _MOTOROLA_EXTENDED_12B:
-                        return 'MOTOROLA_EXTENDED_12_BYTES_BE'
+                    return_value = _long_double_representation_case1(read)
+                    if return_value:
+                        return return_value
+
                 # if the content was 16 bytes, we are left with 32-8-16 = 16
                 # "before" bytes, so 8 went past the sliding window.
                 elif read[:8] == _BEFORE_SEQ[8:]:
-                    if read[8:-8] == _INTEL_EXTENDED_16B:
-                        return 'INTEL_EXTENDED_16_BYTES_LE'
-                    elif read[8:-8] == _IEEE_QUAD_PREC_BE:
-                        return 'IEEE_QUAD_BE'
-                    elif read[8:-8] == _IEEE_QUAD_PREC_LE:
-                        return 'IEEE_QUAD_LE'
-                    elif read[8:-8] == _IBM_DOUBLE_DOUBLE_LE:
-                        return 'IBM_DOUBLE_DOUBLE_LE'
-                    elif read[8:-8] == _IBM_DOUBLE_DOUBLE_BE:
-                        return 'IBM_DOUBLE_DOUBLE_BE'
+                    return_value =  _long_double_representation_case2(read)
+                    if return_value:
+                        return return_value
                 # if the content was 8 bytes, left with 32-8-8 = 16 bytes
                 elif read[:16] == _BEFORE_SEQ:
-                    if read[16:-8] == _IEEE_DOUBLE_LE:
-                        return 'IEEE_DOUBLE_LE'
-                    elif read[16:-8] == _IEEE_DOUBLE_BE:
-                        return 'IEEE_DOUBLE_BE'
-
+                    return_value =  _long_double_representation_case3(read)
+                    if return_value:
+                        return return_value
     if saw is not None:
         raise ValueError("Unrecognized format (%s)" % saw)
     else:
         # We never detected the after_sequence
         raise ValueError("Could not lock sequences (%s)" % saw)
+
+def _long_double_representation_case1(read):
+    # if the content was 12 bytes, we only have 32 - 8 - 12 = 12
+    # "before" bytes. In other words the first 4 "before" bytes went
+    # past the sliding window.
+    if read[12:-8] == _INTEL_EXTENDED_12B:
+        return 'INTEL_EXTENDED_12_BYTES_LE'
+    if read[12:-8] == _MOTOROLA_EXTENDED_12B:
+        return 'MOTOROLA_EXTENDED_12_BYTES_BE'
+    return None
+
+def _long_double_representation_case2(read):
+    # if the content was 16 bytes, we are left with 32-8-16 = 16
+    # "before" bytes, so 8 went past the sliding window.
+    if read[8:-8] == _INTEL_EXTENDED_16B:
+        return 'INTEL_EXTENDED_16_BYTES_LE'
+    elif read[8:-8] == _IEEE_QUAD_PREC_BE:
+        return 'IEEE_QUAD_BE'
+    elif read[8:-8] == _IEEE_QUAD_PREC_LE:
+        return 'IEEE_QUAD_LE'
+    elif read[8:-8] == _IBM_DOUBLE_DOUBLE_LE:
+        return 'IBM_DOUBLE_DOUBLE_LE'
+    elif read[8:-8] == _IBM_DOUBLE_DOUBLE_BE:
+        return 'IBM_DOUBLE_DOUBLE_BE'
+    return None
+
+def _long_double_representation_case3(read):
+    # if the content was 8 bytes, left with 32-8-8 = 16 bytes
+    if read[16:-8] == _IEEE_DOUBLE_LE:
+        return 'IEEE_DOUBLE_LE'
+    elif read[16:-8] == _IEEE_DOUBLE_BE:
+        return 'IEEE_DOUBLE_BE'
+    return None
