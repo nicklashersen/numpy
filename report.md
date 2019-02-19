@@ -83,6 +83,7 @@ Report of new coverage: [link]
 Test cases added:
 
 
+```
 test_setup_type_error
 test_get_paths_env_var_is_file
 test_get_paths_env_var_is_not_file
@@ -100,6 +101,7 @@ test_data_dir_raises
 test_data_files_raises
 test_setup_dist_help
 test_setup_ext_library_string
+```
 
 
 ## Refactoring
