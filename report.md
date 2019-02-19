@@ -138,28 +138,29 @@ Patch: git diff 6c2ee88529265f0e002c9504973fe7679fef4c0a
 
 Test cases added:
 
-```
-test_setup_type_error
-test_get_paths_env_var_is_file
-test_get_paths_env_var_is_not_file
-test_CCompiler_customize_need_cxx_true_gcc
-test_CCompiler_customize_need_cxx_true_gcc_no_cxx
-test_CCompiler_customize_need_cxx_true_non_gcc
-test_get_atlas_version
-test_swig_opts
-test_f2py_opts
-test_command_sequence
-test_no_locale
-test_long_double_representation_value_error
-test_long_double_representation_intel_extended_12b
-test_data_dir_raises
-test_data_files_raises
-test_setup_dist_help
-test_setup_ext_library_string
-```
+
+test_setup_type_error: https://codecov.io/gh/numpy/numpy/src/master/numpy/distutils/system_info.py#L1496  
+test_get_paths_env_var_is_file: https://codecov.io/gh/numpy/numpy/src/master/numpy/distutils/system_info.py#L683  
+test_get_paths_env_var_is_not_file: https://codecov.io/gh/numpy/numpy/src/master/numpy/distutils/system_info.py#L694  
+test_CCompiler_customize_need_cxx_true_gcc: https://codecov.io/gh/numpy/numpy/src/master/numpy/distutils/ccompiler.py#L501  
+test_CCompiler_customize_need_cxx_true_gcc_no_cxx: https://codecov.io/gh/numpy/numpy/src/master/numpy/distutils/ccompiler.py#L531  
+test_CCompiler_customize_need_cxx_true_non_gcc: https://codecov.io/gh/numpy/numpy/src/master/numpy/distutils/ccompiler.py#L531  
+test_get_atlas_version: https://codecov.io/gh/numpy/numpy/src/master/numpy/distutils/system_info.py#L1469  
+test_swig_opts: https://codecov.io/gh/numpy/numpy/src/master/numpy/distutils/command/build_src.py#L126  
+test_f2py_opts: https://codecov.io/gh/numpy/numpy/src/master/numpy/distutils/command/build_src.py#L114  
+test_command_sequence: https://codecov.io/gh/numpy/numpy/src/master/numpy/distutils/exec_command.py#L278  
+test_no_locale: https://codecov.io/gh/numpy/numpy/src/master/numpy/distutils/exec_command.py#L306  
+test_long_double_representation_value_error: https://codecov.io/gh/numpy/numpy/src/master/numpy/core/setup_common.py#L401  
+test_long_double_representation_intel_extended_12b: https://codecov.io/gh/numpy/numpy/src/master/numpy/core/setup_common.py#L374  
+test_data_dir_raises: https://codecov.io/gh/numpy/numpy/src/master/numpy/distutils/misc_util.py#L1118  
+test_data_files_raises: https://codecov.io/gh/numpy/numpy/src/master/numpy/distutils/misc_util.py#L1291  
+test_add_data_files: https://codecov.io/gh/numpy/numpy/src/master/numpy/distutils/misc_util.py#L1331  
+test_add_data_dir: https://codecov.io/gh/numpy/numpy/src/master/numpy/distutils/misc_util.py#L1166  
+test_setup_dist_help: https://codecov.io/gh/numpy/numpy/src/master/numpy/distutils/core.py#L134  
+test_setup_ext_library_string: https://codecov.io/gh/numpy/numpy/src/master/numpy/distutils/core.py#L134  
+test_scalar_string_raises: https://codecov.io/gh/numpy/numpy/src/master/numpy/core/_dtype.py#L168  
 
 ## Refactoring
-
 
 Functions refactored:
 
