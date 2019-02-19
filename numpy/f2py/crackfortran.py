@@ -2555,6 +2555,153 @@ def _eval_scalar(value, params):
                 % (msg, value, list(params.keys())))
     return value
 
+def _analyze_attrspec_case(vars):
+    """
+    Analyze and modify the vars dictionary.
+    """
+
+    attr = vars[n]['attrspec']
+    attr.reverse()
+    vars[n]['attrspec'] = []
+    dim, intent, depend, check, note = None, None, None, None, None
+    for a in attr:
+        if a[:9] == 'dimension':
+            dim = (a[9:].strip())[1:-1]
+        elif a[:6] == 'intent':
+            intent = (a[6:].strip())[1:-1]
+        elif a[:6] == 'depend':
+            depend = (a[6:].strip())[1:-1]
+        elif a[:5] == 'check':
+            check = (a[5:].strip())[1:-1]
+        elif a[:4] == 'note':
+            note = (a[4:].strip())[1:-1]
+        else:
+            vars[n] = setattrspec(vars[n], a)
+        if intent:
+            if 'intent' not in vars[n]:
+                vars[n]['intent'] = []
+            for c in [x.strip() for x in markoutercomma(intent).split('@,@')]:
+                # Remove spaces so that 'in out' becomes 'inout'
+                tmp = c.replace(' ', '')
+                if tmp not in vars[n]['intent']:
+                    vars[n]['intent'].append(tmp)
+            intent = None
+        if note:
+            note = note.replace('\\n\\n', '\n\n')
+            note = note.replace('\\n ', '\n')
+            if 'note' not in vars[n]:
+                vars[n]['note'] = [note]
+            else:
+                vars[n]['note'].append(note)
+            note = None
+        if depend is not None:
+            if 'depend' not in vars[n]:
+                vars[n]['depend'] = []
+            for c in rmbadname([x.strip() for x in markoutercomma(depend).split('@,@')]):
+                if c not in vars[n]['depend']:
+                    vars[n]['depend'].append(c)
+            depend = None
+        if check is not None:
+            if 'check' not in vars[n]:
+                vars[n]['check'] = []
+            for c in [x.strip() for x in markoutercomma(check).split('@,@')]:
+                if c not in vars[n]['check']:
+                    vars[n]['check'].append(c)
+            check = None
+    if dim and 'dimension' not in vars[n]:
+        vars[n]['dimension'] = []
+        for d in rmbadname([x.strip() for x in markoutercomma(dim).split('@,@')]):
+            star = '*'
+            if d == ':':
+                star = ':'
+            if d in params:
+                d = str(params[d])
+            for p in list(params.keys()):
+                re_1 = re.compile(r'(?P<before>.*?)\b' + p + r'\b(?P<after>.*)', re.I)
+                m = re_1.match(d)
+                while m:
+                    d = m.group('before') + \
+                        str(params[p]) + m.group('after')
+                    m = re_1.match(d)
+            if d == star:
+                dl = [star]
+            else:
+                dl = markoutercomma(d, ':').split('@:@')
+            if len(dl) == 2 and '*' in dl:  # e.g. dimension(5:*)
+                dl = ['*']
+                d = '*'
+            if len(dl) == 1 and not dl[0] == star:
+                dl = ['1', dl[0]]
+            if len(dl) == 2:
+                d, v, di = getarrlen(dl, list(block['vars'].keys()))
+                if d[:4] == '1 * ':
+                    d = d[4:]
+                if di and di[-4:] == '/(1)':
+                    di = di[:-4]
+                if v:
+                    savelindims[d] = v, di
+            vars[n]['dimension'].append(d)
+
+def _analyze_dimension_case(vars):
+    """
+    Analyze and modify the vars dictionary.
+    """
+
+    if isintent_c(vars[n]):
+        shape_macro = 'shape'
+    else:
+        shape_macro = 'shape'  # 'fshape'
+    if isstringarray(vars[n]):
+        if 'charselector' in vars[n]:
+            d = vars[n]['charselector']
+            if '*' in d:
+                d = d['*']
+                errmess('analyzevars: character array "character*%s %s(%s)" is considered as "character %s(%s)"; "intent(c)" is forced.\n'
+                        % (d, n,
+                            ','.join(vars[n]['dimension']),
+                            n, ','.join(vars[n]['dimension'] + [d])))
+                vars[n]['dimension'].append(d)
+                del vars[n]['charselector']
+                if 'intent' not in vars[n]:
+                    vars[n]['intent'] = []
+                if 'c' not in vars[n]['intent']:
+                    vars[n]['intent'].append('c')
+            else:
+                errmess(
+                    "analyzevars: charselector=%r unhandled." % (d))
+
+def _analyze_equals_case(vars):
+    """
+    Analyze and modify the vars dictionary.
+    """
+
+    if 'attrspec' not in vars[n]:
+        vars[n]['attrspec'] = []
+    if ('optional' not in vars[n]['attrspec']) and \
+        ('required' not in vars[n]['attrspec']):
+        vars[n]['attrspec'].append('optional')
+    if 'depend' not in vars[n]:
+        vars[n]['depend'] = []
+        for v, m in list(dep_matches.items()):
+            if m(vars[n]['=']):
+                vars[n]['depend'].append(v)
+        if not vars[n]['depend']:
+            del vars[n]['depend']
+    if isscalar(vars[n]):
+        vars[n]['='] = _eval_scalar(vars[n]['='], params)
+
+def _analyze_kindselector_case(vars):
+    """
+    Analyze and modify the vars dictionary.
+    """
+
+    if 'kind' in vars[n]['kindselector']:
+        l = vars[n]['kindselector']['kind']
+        try:
+            l = str(eval(l, {}, params))
+        except Exception:
+            pass
+        vars[n]['kindselector']['kind'] = l
 
 def analyzevars(block):
     global f90modulevars
@@ -2625,120 +2772,13 @@ def analyzevars(block):
                 vars[n]['charselector']['len'] = l
 
         if 'kindselector' in vars[n]:
-            if 'kind' in vars[n]['kindselector']:
-                l = vars[n]['kindselector']['kind']
-                try:
-                    l = str(eval(l, {}, params))
-                except Exception:
-                    pass
-                vars[n]['kindselector']['kind'] = l
+            _analyze_kindselector_case(vars)
 
         savelindims = {}
         if 'attrspec' in vars[n]:
-            attr = vars[n]['attrspec']
-            attr.reverse()
-            vars[n]['attrspec'] = []
-            dim, intent, depend, check, note = None, None, None, None, None
-            for a in attr:
-                if a[:9] == 'dimension':
-                    dim = (a[9:].strip())[1:-1]
-                elif a[:6] == 'intent':
-                    intent = (a[6:].strip())[1:-1]
-                elif a[:6] == 'depend':
-                    depend = (a[6:].strip())[1:-1]
-                elif a[:5] == 'check':
-                    check = (a[5:].strip())[1:-1]
-                elif a[:4] == 'note':
-                    note = (a[4:].strip())[1:-1]
-                else:
-                    vars[n] = setattrspec(vars[n], a)
-                if intent:
-                    if 'intent' not in vars[n]:
-                        vars[n]['intent'] = []
-                    for c in [x.strip() for x in markoutercomma(intent).split('@,@')]:
-                        # Remove spaces so that 'in out' becomes 'inout'
-                        tmp = c.replace(' ', '')
-                        if tmp not in vars[n]['intent']:
-                            vars[n]['intent'].append(tmp)
-                    intent = None
-                if note:
-                    note = note.replace('\\n\\n', '\n\n')
-                    note = note.replace('\\n ', '\n')
-                    if 'note' not in vars[n]:
-                        vars[n]['note'] = [note]
-                    else:
-                        vars[n]['note'].append(note)
-                    note = None
-                if depend is not None:
-                    if 'depend' not in vars[n]:
-                        vars[n]['depend'] = []
-                    for c in rmbadname([x.strip() for x in markoutercomma(depend).split('@,@')]):
-                        if c not in vars[n]['depend']:
-                            vars[n]['depend'].append(c)
-                    depend = None
-                if check is not None:
-                    if 'check' not in vars[n]:
-                        vars[n]['check'] = []
-                    for c in [x.strip() for x in markoutercomma(check).split('@,@')]:
-                        if c not in vars[n]['check']:
-                            vars[n]['check'].append(c)
-                    check = None
-            if dim and 'dimension' not in vars[n]:
-                vars[n]['dimension'] = []
-                for d in rmbadname([x.strip() for x in markoutercomma(dim).split('@,@')]):
-                    star = '*'
-                    if d == ':':
-                        star = ':'
-                    if d in params:
-                        d = str(params[d])
-                    for p in list(params.keys()):
-                        re_1 = re.compile(r'(?P<before>.*?)\b' + p + r'\b(?P<after>.*)', re.I)
-                        m = re_1.match(d)
-                        while m:
-                            d = m.group('before') + \
-                                str(params[p]) + m.group('after')
-                            m = re_1.match(d)
-                    if d == star:
-                        dl = [star]
-                    else:
-                        dl = markoutercomma(d, ':').split('@:@')
-                    if len(dl) == 2 and '*' in dl:  # e.g. dimension(5:*)
-                        dl = ['*']
-                        d = '*'
-                    if len(dl) == 1 and not dl[0] == star:
-                        dl = ['1', dl[0]]
-                    if len(dl) == 2:
-                        d, v, di = getarrlen(dl, list(block['vars'].keys()))
-                        if d[:4] == '1 * ':
-                            d = d[4:]
-                        if di and di[-4:] == '/(1)':
-                            di = di[:-4]
-                        if v:
-                            savelindims[d] = v, di
-                    vars[n]['dimension'].append(d)
+            _analyze_attrspec_case(vars)
         if 'dimension' in vars[n]:
-            if isintent_c(vars[n]):
-                shape_macro = 'shape'
-            else:
-                shape_macro = 'shape'  # 'fshape'
-            if isstringarray(vars[n]):
-                if 'charselector' in vars[n]:
-                    d = vars[n]['charselector']
-                    if '*' in d:
-                        d = d['*']
-                        errmess('analyzevars: character array "character*%s %s(%s)" is considered as "character %s(%s)"; "intent(c)" is forced.\n'
-                                % (d, n,
-                                   ','.join(vars[n]['dimension']),
-                                   n, ','.join(vars[n]['dimension'] + [d])))
-                        vars[n]['dimension'].append(d)
-                        del vars[n]['charselector']
-                        if 'intent' not in vars[n]:
-                            vars[n]['intent'] = []
-                        if 'c' not in vars[n]['intent']:
-                            vars[n]['intent'].append('c')
-                    else:
-                        errmess(
-                            "analyzevars: charselector=%r unhandled." % (d))
+            _analyze_dimension_case(vars)
         if 'check' not in vars[n] and 'args' in block and n in block['args']:
             flag = 'depend' not in vars[n]
             if flag:
@@ -2818,20 +2858,7 @@ def analyzevars(block):
             if flag and not vars[n]['depend']:
                 del vars[n]['depend']
         if '=' in vars[n]:
-            if 'attrspec' not in vars[n]:
-                vars[n]['attrspec'] = []
-            if ('optional' not in vars[n]['attrspec']) and \
-               ('required' not in vars[n]['attrspec']):
-                vars[n]['attrspec'].append('optional')
-            if 'depend' not in vars[n]:
-                vars[n]['depend'] = []
-                for v, m in list(dep_matches.items()):
-                    if m(vars[n]['=']):
-                        vars[n]['depend'].append(v)
-                if not vars[n]['depend']:
-                    del vars[n]['depend']
-            if isscalar(vars[n]):
-                vars[n]['='] = _eval_scalar(vars[n]['='], params)
+            _analyze_equals_case(vars)
 
     for n in list(vars.keys()):
         if n == block['name']:  # n is block name
