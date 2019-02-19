@@ -86,6 +86,9 @@ The function `CCompiler_customize` customizes the compiler command depending on 
 #### get\_paths
 The function `get_paths` returns the current environment PATH for a given type (src, library, etc). We got a CCN of 19 and the reason for this is that there are a lot of if-statements and loops for different types of paths an concatenated paths (with :). The function is quite long since it is quite complex and includes a lot of different cases and logic for concatenating paths. There are no thrown exceptions in the function. There is no documentation for this particular function. Lizard reports a CCN of 20 which differs by 1 from our calculation.
 
+#### setup
+The setup function loads configuration and libraries for the distribution utilities. It copies specified attributes (given as argument) from various configurations into configurations in the dist utility core (distutils.core). The function has a high cyclomatic complexity because it 1) copies a lot of different types of data (which could be split into separate functions) and 2) copies data from various places and data structures. It also has a high cyclomatic complexity because it has a lot of if-statements for the various attributes given in the arguments.
+
 ## Coverage tool 
 
 
