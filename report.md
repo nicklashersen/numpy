@@ -97,6 +97,9 @@ are directly dependant on the method in which the version information is found. 
 since the different methods of finding the ATLAS version easily may be split up into smaller units, thus resulting in a lower
 complexity of the function.
 
+#### \_scalar\_str
+The function `_scalar_str` returns a string to describe the numpy dtype each branch result in a uniqe string. We calculated the CCN to 16 which is very reasonable for this function. The numpy library comes with more than 10 possible dtypes (bools, different sizes of floats and ints, etc) and there is support to define your own. There is no other reasonable way to implement this (without harming readability), however some of the cases can be broken down and separeted to reduce CCN. There is some documentation for this function, a few cases are. The function may raise runtimeError.
+
 #### setup
 The setup function loads configuration and libraries for the distribution utilities. It copies specified attributes (given as argument) from various configurations into configurations in the dist utility core (distutils.core). The function has a high cyclomatic complexity because it 1) copies a lot of different types of data (which could be split into separate functions) and 2) copies data from various places and data structures. It also has a high cyclomatic complexity because it has a lot of if-statements for the various attributes given in the arguments.
 
